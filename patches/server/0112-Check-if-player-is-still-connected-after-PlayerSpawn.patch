@@ -6,10 +6,10 @@ Subject: [PATCH] Check if player is still connected after
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index c5c8382a8f619e0017e15d1973413c7e42114519..e916edcd3463eb559ffd58afbb06cbd447197ac7 100644
+index 9f53d57ecf3fbf26ba996be7d3538411cfc28aca..eb2b0c2d2692695f07a059612c3b7a0bc3ce101a 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -248,6 +248,13 @@ public abstract class PlayerList {
+@@ -260,6 +260,13 @@ public abstract class PlayerList {
          org.spigotmc.event.player.PlayerSpawnLocationEvent ev = new com.destroystokyo.paper.event.player.PlayerInitialSpawnEvent(spawnPlayer, spawnPlayer.getLocation()); // Paper use our duplicate event
          this.cserver.getPluginManager().callEvent(ev);
  
@@ -24,7 +24,7 @@ index c5c8382a8f619e0017e15d1973413c7e42114519..e916edcd3463eb559ffd58afbb06cbd4
          worldserver1 = ((CraftWorld) loc.getWorld()).getHandle();
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 0ee31f9ace4a76a5c77f798a8d961da83a799e96..e16d5fe78e72cd782fe8cf8cd018a6f9b03e9e33 100644
+index 32033b2b6cd6a91014c2c2f6eb8f98ef985c9a59..0ab38651daaf47452c38a9ce7eae89bd231aef5a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
@@ -42,8 +42,8 @@ index 0ee31f9ace4a76a5c77f798a8d961da83a799e96..e16d5fe78e72cd782fe8cf8cd018a6f9
 +import net.minecraft.network.PacketSendListener;
  import net.minecraft.network.chat.Component;
  import net.minecraft.network.chat.PlayerChatMessage;
- import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
-@@ -43,6 +45,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+ import net.minecraft.network.protocol.Packet;
+@@ -44,6 +46,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
  import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
  import net.minecraft.network.protocol.game.ClientboundCustomChatCompletionsPacket;
  import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
@@ -51,7 +51,7 @@ index 0ee31f9ace4a76a5c77f798a8d961da83a799e96..e16d5fe78e72cd782fe8cf8cd018a6f9
  import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
  import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
  import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
-@@ -650,6 +653,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -623,6 +626,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          final ServerGamePacketListenerImpl connection = this.getHandle().connection;
          if (connection != null) {
              connection.disconnect(message == null ? net.kyori.adventure.text.Component.empty() : message, cause);

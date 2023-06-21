@@ -5,10 +5,10 @@ Subject: [PATCH] Check if chunk is loaded when broadcasting changes
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 97f2ac1f03a25c9b6adfe0e6c2186dbab90637d2..ec4871ce5d1cf014591840e3a76b742bdfc2baa0 100644
+index d7483fd0b0eee95fc4f9b338bc548433c0551bbb..592d63b743fa2034ddbe5435fd33bb24fb2d8190 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -828,7 +828,7 @@ public class ServerChunkCache extends ChunkSource {
+@@ -676,7 +676,7 @@ public class ServerChunkCache extends ChunkSource {
                  ReferenceOpenHashSet<ChunkHolder> copy = this.chunkMap.needsChangeBroadcasting.clone();
                  this.chunkMap.needsChangeBroadcasting.clear();
                  for (ChunkHolder holder : copy) {

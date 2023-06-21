@@ -5,10 +5,10 @@ Subject: [PATCH] Add getAllOnlinePlayers and getLocalOnlinePlayers
 
 
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 6826ce1cd003a4e3888024db3629263a46e0dd69..c5c8382a8f619e0017e15d1973413c7e42114519 100644
+index 2e1b6134fec7769b861d034c94b59b4cb3f7183d..9f53d57ecf3fbf26ba996be7d3538411cfc28aca 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -119,6 +119,7 @@ public abstract class PlayerList {
+@@ -124,6 +124,7 @@ public abstract class PlayerList {
      private static final SimpleDateFormat BAN_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
      private final MinecraftServer server;
      public final List<ServerPlayer> players = new java.util.concurrent.CopyOnWriteArrayList(); // CraftBukkit - ArrayList -> CopyOnWriteArrayList: Iterator safety
@@ -16,15 +16,15 @@ index 6826ce1cd003a4e3888024db3629263a46e0dd69..c5c8382a8f619e0017e15d1973413c7e
      private final Map<UUID, ServerPlayer> playersByUUID = Maps.newHashMap();
      private final UserBanList bans;
      private final IpBanList ipBans;
-@@ -303,6 +304,7 @@ public abstract class PlayerList {
+@@ -315,6 +316,7 @@ public abstract class PlayerList {
  
-         // player.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players)); // Paper
+         // entityplayer.connection.send(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(this.players)); // CraftBukkit - replaced with loop below
          this.players.add(player);
 +        if (!(player instanceof ExternalPlayer)) this.localPlayers.add(player); // MultiPaper
          this.playersByName.put(player.getScoreboardName().toLowerCase(java.util.Locale.ROOT), player); // Spigot
          this.playersByUUID.put(player.getUUID(), player);
          // this.broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityplayer))); // CraftBukkit - replaced with loop below
-@@ -636,6 +638,7 @@ public abstract class PlayerList {
+@@ -647,6 +649,7 @@ public abstract class PlayerList {
          worldserver.removePlayerImmediately(entityplayer, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
          entityplayer.getAdvancements().stopListening();
          this.players.remove(entityplayer);
@@ -32,15 +32,15 @@ index 6826ce1cd003a4e3888024db3629263a46e0dd69..c5c8382a8f619e0017e15d1973413c7e
          this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
          this.server.getCustomBossEvents().onPlayerDisconnect(entityplayer);
          UUID uuid = entityplayer.getUUID();
-@@ -804,6 +807,7 @@ public abstract class PlayerList {
+@@ -815,6 +818,7 @@ public abstract class PlayerList {
          // MultiPaper end
          entityplayer.stopRiding(); // CraftBukkit
          this.players.remove(entityplayer);
 +        if (!(entityplayer instanceof ExternalPlayer)) this.localPlayers.remove(entityplayer); // MultiPaper
          this.playersByName.remove(entityplayer.getScoreboardName().toLowerCase(java.util.Locale.ROOT)); // Spigot
-         entityplayer.getLevel().removePlayerImmediately(entityplayer, Entity.RemovalReason.DISCARDED);
+         entityplayer.serverLevel().removePlayerImmediately(entityplayer, Entity.RemovalReason.DISCARDED);
          BlockPos blockposition = entityplayer.getRespawnPosition();
-@@ -941,6 +945,7 @@ public abstract class PlayerList {
+@@ -952,6 +956,7 @@ public abstract class PlayerList {
          if (!entityplayer.connection.isDisconnected()) {
              worldserver1.addRespawnedPlayer(entityplayer1);
              this.players.add(entityplayer1);
@@ -49,10 +49,10 @@ index 6826ce1cd003a4e3888024db3629263a46e0dd69..c5c8382a8f619e0017e15d1973413c7e
              this.playersByUUID.put(entityplayer1.getUUID(), entityplayer1);
          }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a3622a103f9b 100644
+index 43af6dae4a07a02f5e0541c0d73ba7bf832e8479..7298459cb9988c6583b5c9b3ba151b537cef8f56 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -288,6 +288,7 @@ public final class CraftServer implements Server {
+@@ -293,6 +293,7 @@ public final class CraftServer implements Server {
      private final Object2IntOpenHashMap<SpawnCategory> spawnCategoryLimit = new Object2IntOpenHashMap<>();
      private final CraftMultiPaperNotificationManager multipaperNotificationManager = new CraftMultiPaperNotificationManager(); // MultiPaper
      private File container;
@@ -60,7 +60,7 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
      private WarningState warningState = WarningState.DEFAULT;
      public String minimumAPI;
      public CraftScoreboardManager scoreboardManager;
-@@ -297,6 +298,7 @@ public final class CraftServer implements Server {
+@@ -303,6 +304,7 @@ public final class CraftServer implements Server {
      private boolean overrideAllCommandBlockCommands = false;
      public boolean ignoreVanillaPermissions = false;
      private final List<CraftPlayer> playerView;
@@ -68,7 +68,7 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
      public int reloadCount;
      private final io.papermc.paper.datapack.PaperDatapackManager datapackManager; // Paper
      public static Exception excessiveVelEx; // Paper - Velocity warnings
-@@ -319,6 +321,14 @@ public final class CraftServer implements Server {
+@@ -325,6 +327,14 @@ public final class CraftServer implements Server {
                  return player.getBukkitEntity();
              }
          }));
@@ -82,8 +82,8 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
 +        // MultiPaper end
          this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
          this.structureManager = new CraftStructureManager(console.getStructureManager());
- 
-@@ -616,10 +626,28 @@ public final class CraftServer implements Server {
+         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
+@@ -627,10 +637,28 @@ public final class CraftServer implements Server {
      }
      // Paper end
  
@@ -112,7 +112,7 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
  
      @Override
      @Deprecated
-@@ -634,7 +662,7 @@ public final class CraftServer implements Server {
+@@ -645,7 +673,7 @@ public final class CraftServer implements Server {
  
          String lowerName = name.toLowerCase(java.util.Locale.ENGLISH);
          int delta = Integer.MAX_VALUE;
@@ -121,16 +121,16 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
              if (player.getName().toLowerCase(java.util.Locale.ENGLISH).startsWith(lowerName)) {
                  int curDelta = Math.abs(player.getName().length() - lowerName.length());
                  if (curDelta < delta) {
-@@ -681,7 +709,7 @@ public final class CraftServer implements Server {
+@@ -693,7 +721,7 @@ public final class CraftServer implements Server {
  
-         List<Player> matchedPlayers = new ArrayList<Player>();
+         List<Player> matchedPlayers = new ArrayList<>();
  
 -        for (Player iterPlayer : this.getOnlinePlayers()) {
 +        for (Player iterPlayer : this.getAllOnlinePlayers()) { // MultiPaper
              String iterPlayerName = iterPlayer.getName();
  
              if (partialName.equalsIgnoreCase(iterPlayerName)) {
-@@ -2149,7 +2177,7 @@ public final class CraftServer implements Server {
+@@ -2175,7 +2203,7 @@ public final class CraftServer implements Server {
              }
          }
  
@@ -139,7 +139,7 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
  
          return players.toArray(new OfflinePlayer[players.size()]);
      }
-@@ -2320,6 +2348,8 @@ public final class CraftServer implements Server {
+@@ -2359,6 +2387,8 @@ public final class CraftServer implements Server {
              return ImmutableList.of();
          }
  
@@ -148,7 +148,7 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
          List<String> offers;
          Player player = (Player) sender;
          if (message.startsWith("/") || forceCommand) {
-@@ -2331,6 +2361,8 @@ public final class CraftServer implements Server {
+@@ -2370,6 +2400,8 @@ public final class CraftServer implements Server {
          TabCompleteEvent tabEvent = new TabCompleteEvent(player, message, offers, message.startsWith("/") || forceCommand, pos != null ? io.papermc.paper.util.MCUtil.toLocation(((CraftWorld) player.getWorld()).getHandle(), BlockPos.containing(pos)) : null); // Paper
          this.getPluginManager().callEvent(tabEvent);
  
@@ -157,7 +157,7 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
          return tabEvent.isCancelled() ? Collections.EMPTY_LIST : tabEvent.getCompletions();
      }
  
-@@ -2365,7 +2397,7 @@ public final class CraftServer implements Server {
+@@ -2404,7 +2436,7 @@ public final class CraftServer implements Server {
          List<String> completions = new ArrayList<String>();
          PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
          String token = event.getLastToken();
@@ -166,7 +166,7 @@ index eb2968caa5f1aa297930abe984f7dbbeb10832fb..c3496e3a7e07610acd8cfaf364f8a362
              if (player.canSee(p) && StringUtil.startsWithIgnoreCase(p.getName(), token)) {
                  completions.add(p.getName());
              }
-@@ -2866,14 +2898,14 @@ public final class CraftServer implements Server {
+@@ -2906,14 +2938,14 @@ public final class CraftServer implements Server {
  
          @Override
          public void broadcast(BaseComponent component) {

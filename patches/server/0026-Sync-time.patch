@@ -5,19 +5,19 @@ Subject: [PATCH] Sync time
 
 
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 9d0b2836272f32fe958d70e31e8c09f331280001..632cbac3157a5694842eab0eab36ab7a049daae2 100644
+index 894881206b1d9b754e95bbd5d575fabb11f29de6..f401f2480b69e2a3a22367980ac51cdb77d16b86 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1538,6 +1538,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
-             long worldTime = world.getGameTime();
+@@ -1535,6 +1535,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+             long worldTime = level.getGameTime();
              final ClientboundSetTimePacket worldPacket = new ClientboundSetTimePacket(worldTime, dayTime, doDaylight);
-             for (Player entityhuman : world.players()) {
+             for (Player entityhuman : level.players()) {
 +                if (MultiPaper.isExternalPlayer(entityhuman)) continue; // MultiPaper - Don't send the time to external players
-                 if (!(entityhuman instanceof ServerPlayer) || (!world.isForceTime() && (tickCount + entityhuman.getId()) % 20 != 0)) { // Purpur
+                 if (!(entityhuman instanceof ServerPlayer) || (!level.isForceTime() && (tickCount + entityhuman.getId()) % 20 != 0)) { // Purpur
                      continue;
                  }
 diff --git a/src/main/java/net/minecraft/server/commands/TimeCommand.java b/src/main/java/net/minecraft/server/commands/TimeCommand.java
-index f0a7a8df3caa2ea765bb0a87cfede71d0995d276..8b16d7f426d7f934a9569dd39605fa9c9b482ee0 100644
+index 44fcd43a466fb47d31ab05e44bafbef3c4cae63f..19097d0ddbb3cf4c9ad6f990d0f1bf4708f64601 100644
 --- a/src/main/java/net/minecraft/server/commands/TimeCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/TimeCommand.java
 @@ -11,6 +11,8 @@ import net.minecraft.server.level.ServerLevel;
@@ -29,7 +29,7 @@ index f0a7a8df3caa2ea765bb0a87cfede71d0995d276..8b16d7f426d7f934a9569dd39605fa9c
  // CraftBukkit end
  
  public class TimeCommand {
-@@ -61,6 +63,7 @@ public class TimeCommand {
+@@ -63,6 +65,7 @@ public class TimeCommand {
              Bukkit.getPluginManager().callEvent(event);
              if (!event.isCancelled()) {
                  worldserver.setDayTime((long) worldserver.getDayTime() + event.getSkipAmount());
@@ -37,7 +37,7 @@ index f0a7a8df3caa2ea765bb0a87cfede71d0995d276..8b16d7f426d7f934a9569dd39605fa9c
              }
              // CraftBukkit end
          }
-@@ -80,6 +83,7 @@ public class TimeCommand {
+@@ -84,6 +87,7 @@ public class TimeCommand {
              Bukkit.getPluginManager().callEvent(event);
              if (!event.isCancelled()) {
                  worldserver.setDayTime(worldserver.getDayTime() + event.getSkipAmount());
@@ -46,10 +46,10 @@ index f0a7a8df3caa2ea765bb0a87cfede71d0995d276..8b16d7f426d7f934a9569dd39605fa9c
              // CraftBukkit end
          }
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index d9c82f5ba046958bf051a751d0bb1dafdd597fd8..1447dcbbd3611c06a592513fe9067bec55e3822a 100644
+index 73fae9f95a6addcd4aa77c54a86f34944fd3eece..72842ec55c0c46e3dd23bfca696fe387ab025104 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -176,7 +176,9 @@ import org.bukkit.event.world.TimeSkipEvent;
+@@ -179,7 +179,9 @@ import org.bukkit.event.world.TimeSkipEvent;
  // CraftBukkit end
  import it.unimi.dsi.fastutil.ints.IntArrayList; // Paper
  import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
@@ -59,7 +59,7 @@ index d9c82f5ba046958bf051a751d0bb1dafdd597fd8..1447dcbbd3611c06a592513fe9067bec
  
  public class ServerLevel extends Level implements WorldGenLevel {
  
-@@ -674,6 +676,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -816,6 +818,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
                  getCraftServer().getPluginManager().callEvent(event);
                  if (!event.isCancelled()) {
                      this.setDayTime(this.getDayTime() + event.getSkipAmount());
@@ -68,10 +68,10 @@ index d9c82f5ba046958bf051a751d0bb1dafdd597fd8..1447dcbbd3611c06a592513fe9067bec
              }
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index b5415f0c65db728f4a935b87b54fa14b68d31bc4..cc06ce19e70f8e77b368e1f30e5c539b57d01393 100644
+index 1fc38937f514de993439487bb5ec492b49a2ad0b..3412378c2eb61792440bc2a4a0769b5ff16212fe 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -135,6 +135,8 @@ import org.bukkit.util.RayTraceResult;
+@@ -137,6 +137,8 @@ import org.bukkit.util.RayTraceResult;
  import org.bukkit.util.StructureSearchResult;
  import org.bukkit.util.Vector;
  import org.jetbrains.annotations.NotNull;
@@ -80,7 +80,7 @@ index b5415f0c65db728f4a935b87b54fa14b68d31bc4..cc06ce19e70f8e77b368e1f30e5c539b
  
  public class CraftWorld extends CraftRegionAccessor implements World {
      public static final int CUSTOM_DIMENSION_OFFSET = 10;
-@@ -869,6 +871,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
+@@ -871,6 +873,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
          }
  
          this.world.setDayTime(this.world.getDayTime() + event.getSkipAmount());
@@ -89,7 +89,7 @@ index b5415f0c65db728f4a935b87b54fa14b68d31bc4..cc06ce19e70f8e77b368e1f30e5c539b
          // Forces the client to update to the new time immediately
          for (Player p : this.getPlayers()) {
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index 521c13927248d502315054170b2f37a0939df30d..047d966455efc4fa1962cd99ce9a6a4e8ccc942c 100644
+index 306292ef73d4a468922310176905a9d006834791..8ecd0ec33ba7a85c6c4e237ddf61b738dadb65cf 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -116,6 +116,12 @@ public class MultiPaper {

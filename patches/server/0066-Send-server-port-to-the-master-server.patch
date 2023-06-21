@@ -5,10 +5,10 @@ Subject: [PATCH] Send server port to the master server
 
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index 6b6cac6dee300bc56f1104c1ebfdbe1bebf9c308..e6d2347ba62905a2620e0f851affe7bf0d265227 100644
+index 52674823919c5a2e727f2f8269200b624a9655b6..36f91f8229f42d85c29a795c7a27e9ead3434cc9 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -266,6 +266,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+@@ -267,6 +267,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
              this.setPort(dedicatedserverproperties.serverPort);
          }
          bindAddress = new java.net.InetSocketAddress(inetaddress, this.getPort());
@@ -17,7 +17,7 @@ index 6b6cac6dee300bc56f1104c1ebfdbe1bebf9c308..e6d2347ba62905a2620e0f851affe7bf
          // Paper end
  
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index f863560a2671994c166048c2077092b4f34412ec..c966df61713574d68aa4fa02d6e2dd65a249965b 100644
+index 0aaf7c22db1b09fc4936789eecc1a0702e85ee2f..3ebacdb624b0f1357d3377b54edff26283e56110 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -585,4 +585,8 @@ public class MultiPaper {

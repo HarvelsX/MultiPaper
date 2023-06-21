@@ -5,10 +5,10 @@ Subject: [PATCH] Sync entity velocity changes
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index 4954c2edb450d271c6764b40c53d69656f1eec66..b6318b4fe594938755b4a6cfa7da5a3b771c031d 100644
+index a47def11640f79c14e67c7c4f2c4a303f6fdb0ed..e92f9c3a44e0c7b4a5ca748b6aaf28defe9d6b02 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -157,6 +157,7 @@ import puregero.multipaper.MultiPaper;
+@@ -158,6 +158,7 @@ import puregero.multipaper.MultiPaper;
  import puregero.multipaper.MultiPaperEntitiesHandler;
  import puregero.multipaper.MultiPaperEntityIdManager;
  import puregero.multipaper.config.MultiPaperConfiguration;
@@ -16,7 +16,7 @@ index 4954c2edb450d271c6764b40c53d69656f1eec66..b6318b4fe594938755b4a6cfa7da5a3b
  import puregero.multipaper.externalserverprotocol.EntityRemovePacket;
  import puregero.multipaper.externalserverprotocol.EntityUpdateNBTPacket;
  import puregero.multipaper.externalserverprotocol.EntityUpdateWithDependenciesPacket;
-@@ -4586,6 +4587,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -4740,6 +4741,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
  
      public void addDeltaMovement(Vec3 velocity) {
          this.setDeltaMovement(this.getDeltaMovement().add(velocity));
@@ -25,7 +25,7 @@ index 4954c2edb450d271c6764b40c53d69656f1eec66..b6318b4fe594938755b4a6cfa7da5a3b
  
      public void setDeltaMovement(double x, double y, double z) {
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index 4beaedc5ec3562df62a7a9e6b2f40728bd933044..19e3f0e078b9600c17f0d222ebdd826a0fe5c81a 100644
+index 6772c4584f1d243df76b42a730376247c8f04e3b..ca958b2a3929d115ccd384500618a1c5b7f580dc 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
 @@ -299,7 +299,7 @@ public class Explosion {
@@ -39,7 +39,7 @@ index 4beaedc5ec3562df62a7a9e6b2f40728bd933044..19e3f0e078b9600c17f0d222ebdd826a
  
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/AddDeltaMovementPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/AddDeltaMovementPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..41deb4334f35f0064d666109e1782436dd3b04b7
+index 0000000000000000000000000000000000000000..903e370df7b0629675c3a4aed8c1941bcb3148ed
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/AddDeltaMovementPacket.java
 @@ -0,0 +1,73 @@
@@ -76,11 +76,11 @@ index 0000000000000000000000000000000000000000..41deb4334f35f0064d666109e1782436
 +        if (!handlingPacket) {
 +            Entity controller = MultiPaperEntitiesHandler.getControllingPassenger(entity);
 +            if (controller instanceof ExternalPlayer externalPlayer) {
-+                externalPlayer.externalServerConnection.send(new AddDeltaMovementPacket((ServerLevel) entity.level, entity, velocity));
++                externalPlayer.externalServerConnection.send(new AddDeltaMovementPacket((ServerLevel) entity.level(), entity, velocity));
 +            } else {
 +                NewChunkHolder newChunkHolder = MultiPaper.getChunkHolder(entity);
 +                if (newChunkHolder != null && newChunkHolder.externalOwner != null && newChunkHolder.externalOwner.getConnection() != null) {
-+                    newChunkHolder.externalOwner.getConnection().send(new AddDeltaMovementPacket((ServerLevel) entity.level, entity, velocity));
++                    newChunkHolder.externalOwner.getConnection().send(new AddDeltaMovementPacket((ServerLevel) entity.level(), entity, velocity));
 +                }
 +            }
 +        }

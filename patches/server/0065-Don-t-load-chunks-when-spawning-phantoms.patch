@@ -5,10 +5,10 @@ Subject: [PATCH] Don't load chunks when spawning phantoms
 
 
 diff --git a/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java b/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
-index 1c3718d9244513d9fc795dceb564a81375734557..50264ef59fbba59839bb6d4a0ef20496926a6544 100644
+index 5b880677c895d0e747a1ed6a380ae35613334e35..ceb47a0be0b81705684daecdb819c30508bbadf7 100644
 --- a/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
 +++ b/src/main/java/net/minecraft/world/level/levelgen/PhantomSpawner.java
-@@ -73,6 +73,7 @@ public class PhantomSpawner implements CustomSpawner {
+@@ -71,6 +71,7 @@ public class PhantomSpawner implements CustomSpawner {
  
                                      if (randomsource.nextInt(j) >= world.paperConfig().entities.behavior.playerInsomniaStartTicks) { // Paper
                                          BlockPos blockposition1 = blockposition.above(20 + randomsource.nextInt(15)).east(-10 + randomsource.nextInt(21)).south(-10 + randomsource.nextInt(21));

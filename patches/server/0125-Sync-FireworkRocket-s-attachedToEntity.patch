@@ -5,7 +5,7 @@ Subject: [PATCH] Sync FireworkRocket's attachedToEntity
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java b/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-index fca27f98989bf106060ba08196255fe32f850df5..ac435b09c59157fbcc6b282518a55bbed79f76aa 100644
+index 288910fb168ddc5d3a61971778b8038a56772fa8..8578c353af27612be3c5ec0576da73f49ae7167b 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 @@ -323,6 +323,11 @@ public class FireworkRocketEntity extends Projectile implements ItemSupplier {
@@ -25,7 +25,7 @@ index fca27f98989bf106060ba08196255fe32f850df5..ac435b09c59157fbcc6b282518a55bbe
          }
          // Paper end
 +        // MultiPaper start
-+        if (nbt.hasUUID("AttachedToEntity") && level.getEntities().get(nbt.getUUID("AttachedToEntity")) instanceof LivingEntity livingEntity) {
++        if (nbt.hasUUID("AttachedToEntity") && level().getEntities().get(nbt.getUUID("AttachedToEntity")) instanceof LivingEntity livingEntity) {
 +            this.attachedToEntity = livingEntity;
 +        }
 +        // MultiPaper end

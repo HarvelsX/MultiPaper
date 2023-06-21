@@ -5,7 +5,7 @@ Subject: [PATCH] Don't compare items if they're the same item
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index f7dbc6fb3b86fb8908f6d9ab3c19b882b00baa75..714ac91936e14d8a19cc0693e2d8f0635673f56c 100644
+index e1ac28aedb927231acedbe86549c696d659f3603..d4d54eefa1090302701bd1744b53785db1b56102 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
 @@ -350,12 +350,12 @@ public abstract class Player extends LivingEntity {
@@ -14,7 +14,7 @@ index f7dbc6fb3b86fb8908f6d9ab3c19b882b00baa75..714ac91936e14d8a19cc0693e2d8f063
  
 -        if (!ItemStack.matches(this.lastItemInMainHand, itemstack)) {
 +        if (this.lastItemInMainHand != itemstack && !ItemStack.matches(this.lastItemInMainHand, itemstack)) { // MultiPaper - don't compare items if they're the same item
-             if (!ItemStack.isSame(this.lastItemInMainHand, itemstack)) {
+             if (!ItemStack.isSameItem(this.lastItemInMainHand, itemstack)) {
                  this.resetAttackStrengthTicker();
              }
  

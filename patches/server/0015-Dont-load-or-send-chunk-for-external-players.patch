@@ -4,33 +4,11 @@ Date: Thu, 2 Dec 2021 09:17:26 +1000
 Subject: [PATCH] Dont load or send chunk for external players
 
 
-diff --git a/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java b/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
-index e77972c4c264100ffdd824bfa2dac58dbbc6d678..d5986fe149a3dbda82a94beb2081fe07b8e2053a 100644
---- a/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
-+++ b/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
-@@ -22,6 +22,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
- import org.apache.commons.lang3.mutable.MutableObject;
- import org.bukkit.craftbukkit.entity.CraftPlayer;
- import org.bukkit.entity.Player;
-+import puregero.multipaper.MultiPaper;
-+
- import java.util.ArrayDeque;
- import java.util.ArrayList;
- import java.util.List;
-@@ -461,7 +463,7 @@ public final class PlayerChunkLoader {
- 
-     public void addPlayer(final ServerPlayer player) {
-         TickThread.ensureTickThread("Cannot add player async");
--        if (!player.isRealPlayer) {
-+        if (MultiPaper.isExternalPlayer(player) || !player.isRealPlayer) {
-             return;
-         }
-         final PlayerLoaderData data = new PlayerLoaderData(player, this);
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 57fdef8b16e1ed9a4693356144b4685bbcea285c..8068fc37a4303afab28c3523a73c50e7ccddd57c 100644
+index 85c28c0fd8bcbcf6ed6e4205fd217f251c55c92b..20ba45ed68ad318e0d29cb9b548a6aa6776ba08f 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
-@@ -117,6 +117,7 @@ import org.bukkit.entity.Player;
+@@ -116,6 +116,7 @@ import org.bukkit.entity.Player;
  // CraftBukkit end
  
  import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
@@ -38,7 +16,7 @@ index 57fdef8b16e1ed9a4693356144b4685bbcea285c..8068fc37a4303afab28c3523a73c50e7
  
  public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider {
  
-@@ -1069,7 +1070,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1081,7 +1082,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
      }
  
      private boolean skipPlayer(ServerPlayer player) {
@@ -47,7 +25,7 @@ index 57fdef8b16e1ed9a4693356144b4685bbcea285c..8068fc37a4303afab28c3523a73c50e7
      }
  
      void updatePlayerStatus(ServerPlayer player, boolean added) {
-@@ -1606,7 +1607,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1524,7 +1525,7 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
  
          public void updatePlayer(ServerPlayer player) {
              org.spigotmc.AsyncCatcher.catchOp("player tracker update"); // Spigot

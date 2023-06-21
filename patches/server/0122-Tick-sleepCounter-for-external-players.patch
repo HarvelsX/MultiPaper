@@ -5,10 +5,10 @@ Subject: [PATCH] Tick sleepCounter for external players
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 714ac91936e14d8a19cc0693e2d8f0635673f56c..5f709797e1c01669818895ca1d47ed514cbb4384 100644
+index d4d54eefa1090302701bd1744b53785db1b56102..a93a68cbfae991356844cd9000071b6b2308d2e9 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -167,7 +167,7 @@ public abstract class Player extends LivingEntity {
+@@ -168,7 +168,7 @@ public abstract class Player extends LivingEntity {
      public double xCloak;
      public double yCloak;
      public double zCloak;
@@ -18,7 +18,7 @@ index 714ac91936e14d8a19cc0693e2d8f0635673f56c..5f709797e1c01669818895ca1d47ed51
      private final Abilities abilities = new Abilities();
      public int experienceLevel;
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index 668555367671c566c2b6e8d7d2abbf05be6397be..b4ddc444e88885e9f250fafab69a2d8749c6c975 100644
+index b6bd8dc6058fa67a96906a2f36f76f9f85c744f0..5d3dec23cddc2b4e5a367de3c4932bf941fc03c4 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -91,6 +91,12 @@ public class MultiPaper {

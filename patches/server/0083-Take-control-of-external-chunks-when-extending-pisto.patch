@@ -6,15 +6,15 @@ Subject: [PATCH] Take control of external chunks when extending pistons across
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-index 95d65d3ac2b8def54e0e309839021a8270854541..50b6b532331617ca6e06a16ed4274413bbb17006 100644
+index 3ff6bd2f55a1dcb6efc4c3888efe21c82ad7f406..a54a600ca0dc2878d2e1f20cd37ba5a92f17111a 100644
 --- a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.item.ItemStack;
+@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.item.context.BlockPlaceContext;
  import net.minecraft.world.level.BlockGetter;
-+import net.minecraft.world.level.ChunkPos;
  import net.minecraft.world.level.Level;
++import net.minecraft.world.level.ChunkPos;
+ import net.minecraft.world.level.SignalGetter;
  import net.minecraft.world.level.block.Block;
  import net.minecraft.world.level.block.Blocks;
 @@ -41,6 +42,10 @@ import com.google.common.collect.ImmutableList;
@@ -28,7 +28,7 @@ index 95d65d3ac2b8def54e0e309839021a8270854541..50b6b532331617ca6e06a16ed4274413
  // CraftBukkit end
  
  public class PistonBaseBlock extends DirectionalBlock {
-@@ -422,6 +427,9 @@ public class PistonBaseBlock extends DirectionalBlock {
+@@ -423,6 +428,9 @@ public class PistonBaseBlock extends DirectionalBlock {
                  aiblockdata[j++] = iblockdata1;
              }
  
@@ -38,7 +38,7 @@ index 95d65d3ac2b8def54e0e309839021a8270854541..50b6b532331617ca6e06a16ed4274413
              for (k = list.size() - 1; k >= 0; --k) {
                  // Paper start - fix a variety of piston desync dupes
                  boolean allowDesync = io.papermc.paper.configuration.GlobalConfiguration.get().unsupportedSettings.allowPistonDuplication;
-@@ -432,6 +440,8 @@ public class PistonBaseBlock extends DirectionalBlock {
+@@ -433,6 +441,8 @@ public class PistonBaseBlock extends DirectionalBlock {
                  map.remove(blockposition3);
                  BlockState iblockdata2 = (BlockState) Blocks.MOVING_PISTON.defaultBlockState().setValue(PistonBaseBlock.FACING, dir);
  
@@ -47,7 +47,7 @@ index 95d65d3ac2b8def54e0e309839021a8270854541..50b6b532331617ca6e06a16ed4274413
                  world.setBlock(blockposition3, iblockdata2, 68);
                  // Paper start - fix a variety of piston desync dupes
                  if (!allowDesync) {
-@@ -448,6 +458,7 @@ public class PistonBaseBlock extends DirectionalBlock {
+@@ -449,6 +459,7 @@ public class PistonBaseBlock extends DirectionalBlock {
              }
  
              if (retract) {
@@ -55,7 +55,7 @@ index 95d65d3ac2b8def54e0e309839021a8270854541..50b6b532331617ca6e06a16ed4274413
                  PistonType blockpropertypistontype = this.isSticky ? PistonType.STICKY : PistonType.DEFAULT;
                  BlockState iblockdata3 = (BlockState) ((BlockState) Blocks.PISTON_HEAD.defaultBlockState().setValue(PistonHeadBlock.FACING, dir)).setValue(PistonHeadBlock.TYPE, blockpropertypistontype);
  
-@@ -458,6 +469,8 @@ public class PistonBaseBlock extends DirectionalBlock {
+@@ -459,6 +470,8 @@ public class PistonBaseBlock extends DirectionalBlock {
                  ((ServerLevel) world).getChunkSource().blockChanged(blockposition1); // MultiPaper
              }
  
@@ -64,7 +64,7 @@ index 95d65d3ac2b8def54e0e309839021a8270854541..50b6b532331617ca6e06a16ed4274413
              BlockState iblockdata4 = Blocks.AIR.defaultBlockState();
              Iterator iterator = map.keySet().iterator();
  
-@@ -505,6 +518,21 @@ public class PistonBaseBlock extends DirectionalBlock {
+@@ -506,6 +519,21 @@ public class PistonBaseBlock extends DirectionalBlock {
          }
      }
  

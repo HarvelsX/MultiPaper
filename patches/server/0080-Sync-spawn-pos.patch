@@ -5,10 +5,10 @@ Subject: [PATCH] Sync spawn pos
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 6b75e83edf347845c49d5bf0b963c21d410fc902..8f45de99e56d3911d7ccdf020b0311df042e3fd5 100644
+index cac78447abf61a76e77d8874097898da5c935817..209f71a7a8c2835a76b79c6fd4a4322769c3ead2 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -182,6 +182,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
+@@ -185,6 +185,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
  import puregero.multipaper.MultiPaper;
  import puregero.multipaper.MultiPaperChunkHandler;
  import puregero.multipaper.MultiPaperEntitiesHandler;
@@ -16,7 +16,7 @@ index 6b75e83edf347845c49d5bf0b963c21d410fc902..8f45de99e56d3911d7ccdf020b0311df
  import puregero.multipaper.externalserverprotocol.TimeUpdatePacket;
  
  public class ServerLevel extends Level implements WorldGenLevel {
-@@ -2122,6 +2123,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -2265,6 +2266,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
              this.removeTicketsForSpawn(this.paperConfig().spawn.keepSpawnLoadedRange * 16, prevSpawn);
              this.addTicketsForSpawn(this.paperConfig().spawn.keepSpawnLoadedRange * 16, pos);
          }

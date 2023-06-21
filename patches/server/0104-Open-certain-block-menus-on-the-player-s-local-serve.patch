@@ -5,7 +5,7 @@ Subject: [PATCH] Open certain block menus on the player's local server
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
-index bee42ce7c1cb0f5ebd4890c02bc9c5dd727f7fd6..bbcc39805e5f26a2800dedac419dd0c675e222dd 100644
+index 942ce713afe27ec75d849877a88721ef6334fafa..961a1da9d4572bb93ba81f2f2842f571a64ab258 100644
 --- a/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/src/main/java/net/minecraft/world/level/block/state/BlockBehaviour.java
 @@ -13,6 +13,8 @@ import java.util.function.Predicate;
@@ -26,11 +26,12 @@ index bee42ce7c1cb0f5ebd4890c02bc9c5dd727f7fd6..bbcc39805e5f26a2800dedac419dd0c6
  import net.minecraft.world.InteractionHand;
  import net.minecraft.world.InteractionResult;
  import net.minecraft.world.MenuProvider;
-@@ -46,13 +50,7 @@ import net.minecraft.world.level.EmptyBlockGetter;
+@@ -46,14 +50,7 @@ import net.minecraft.world.level.EmptyBlockGetter;
  import net.minecraft.world.level.Level;
  import net.minecraft.world.level.LevelAccessor;
  import net.minecraft.world.level.LevelReader;
 -import net.minecraft.world.level.block.Block;
+-import net.minecraft.world.level.block.Blocks;
 -import net.minecraft.world.level.block.EntityBlock;
 -import net.minecraft.world.level.block.Mirror;
 -import net.minecraft.world.level.block.RenderShape;
@@ -41,7 +42,7 @@ index bee42ce7c1cb0f5ebd4890c02bc9c5dd727f7fd6..bbcc39805e5f26a2800dedac419dd0c6
  import net.minecraft.world.level.block.entity.BlockEntity;
  import net.minecraft.world.level.block.entity.BlockEntityTicker;
  import net.minecraft.world.level.block.entity.BlockEntityType;
-@@ -74,6 +72,10 @@ import net.minecraft.world.phys.Vec3;
+@@ -76,6 +73,10 @@ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
@@ -52,7 +53,7 @@ index bee42ce7c1cb0f5ebd4890c02bc9c5dd727f7fd6..bbcc39805e5f26a2800dedac419dd0c6
  
  public abstract class BlockBehaviour implements FeatureElement {
  
-@@ -1078,6 +1080,36 @@ public abstract class BlockBehaviour implements FeatureElement {
+@@ -1174,6 +1175,36 @@ public abstract class BlockBehaviour implements FeatureElement {
          }
  
          public InteractionResult use(Level world, Player player, InteractionHand hand, BlockHitResult hit) {
@@ -103,7 +104,7 @@ index 4f99b58e9d3da8ada83c80d13e476654fef71179..c0d356fa3ac2dd75ea09c28827e0d054
      private static void addPacket(Class<? extends ExternalServerPacket> clazz, Function<FriendlyByteBuf, ExternalServerPacket> deserializer) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/PlayerUseBlockPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerUseBlockPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..eceb57019cb450c9bb230fe1cdb986d7c5555f21
+index 0000000000000000000000000000000000000000..fbbc9f9bde95a2e57deab403ac0a22208793f91b
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerUseBlockPacket.java
 @@ -0,0 +1,55 @@
@@ -158,7 +159,7 @@ index 0000000000000000000000000000000000000000..eceb57019cb450c9bb230fe1cdb986d7
 +                return;
 +            }
 +
-+            player.level.getBlockState(pos).use(player.level, player, InteractionHand.MAIN_HAND, new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), Direction.NORTH, pos, false));
++            player.level().getBlockState(pos).use(player.level(), player, InteractionHand.MAIN_HAND, new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), Direction.NORTH, pos, false));
 +        });
 +    }
 +}

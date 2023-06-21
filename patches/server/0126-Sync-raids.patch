@@ -5,7 +5,7 @@ Subject: [PATCH] Sync raids
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raid.java b/src/main/java/net/minecraft/world/entity/raid/Raid.java
-index 08b18428e867baf14f551beb72e3875b0c420639..b1031bc26aeb1607d312e70e673a97666f8b0990 100644
+index f7399737548483905f3b5c08a03876b0da54b714..3165424fca089964250375fb0d599c651a11edf6 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raid.java
 +++ b/src/main/java/net/minecraft/world/entity/raid/Raid.java
 @@ -58,6 +58,9 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
@@ -104,7 +104,7 @@ index 08b18428e867baf14f551beb72e3875b0c420639..b1031bc26aeb1607d312e70e673a9766
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/raid/Raids.java b/src/main/java/net/minecraft/world/entity/raid/Raids.java
-index 0670775c2de33e69c75644e5d2ff19db08444040..76c91f3ba9c841819a064e130338bddd24b0ff77 100644
+index 94356e0541f8f4da68211fa533347cc97d4f3518..1ee53df07eccbca1afb3b924f9119f255ed20ba0 100644
 --- a/src/main/java/net/minecraft/world/entity/raid/Raids.java
 +++ b/src/main/java/net/minecraft/world/entity/raid/Raids.java
 @@ -4,7 +4,10 @@ import com.google.common.collect.Maps;
@@ -204,7 +204,7 @@ index 0670775c2de33e69c75644e5d2ff19db08444040..76c91f3ba9c841819a064e130338bddd
                  d0 = d1;
              }
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index b4ddc444e88885e9f250fafab69a2d8749c6c975..0a80cd71c551bf6cb91989656e950970045d4486 100644
+index 5d3dec23cddc2b4e5a367de3c4932bf941fc03c4..d0586f9ed5a6cbd4e60fd444af5c8f857e747393 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -497,6 +497,7 @@ public class MultiPaper {
@@ -230,7 +230,7 @@ index c0d356fa3ac2dd75ea09c28827e0d05437d38117..6eb72802377e6524e1540a1b89940cd7
      private static void addPacket(Class<? extends ExternalServerPacket> clazz, Function<FriendlyByteBuf, ExternalServerPacket> deserializer) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/RaidJoinPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/RaidJoinPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..c2d520ec453eba7637bf9f929b5235879cf943dc
+index 0000000000000000000000000000000000000000..b97070799bb9723e54aa91ed6c562ef18115efe1
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/RaidJoinPacket.java
 @@ -0,0 +1,65 @@
@@ -257,7 +257,7 @@ index 0000000000000000000000000000000000000000..c2d520ec453eba7637bf9f929b523587
 +    private final int raidId;
 +
 +    public RaidJoinPacket(Entity entity, Raid raid) {
-+        this.world = entity.level.getWorld().getName();
++        this.world = entity.level().getWorld().getName();
 +        this.uuid = entity.getUUID();
 +        this.raidId = raid.getId();
 +    }

@@ -5,21 +5,21 @@ Subject: [PATCH] Send crit animations as the entity being critted
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 87286677e0effaa026fb0220d0ad482aa881b14c..c87afb93983fd241e3767517e2b35741da773a1d 100644
+index 20d33ba99fbe143244918ee9937408f754ffc16c..1784e0d5f16dbdd4bbd382c96964595379d76e61 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1966,12 +1966,12 @@ public class ServerPlayer extends Player {
+@@ -2013,12 +2013,12 @@ public class ServerPlayer extends Player {
  
      @Override
      public void crit(Entity target) {
--        this.getLevel().getChunkSource().broadcastAndSend(this, new ClientboundAnimatePacket(target, 4));
-+        this.getLevel().getChunkSource().broadcastAndSend(target, new ClientboundAnimatePacket(target, 4));
+-        this.serverLevel().getChunkSource().broadcastAndSend(this, new ClientboundAnimatePacket(target, 4));
++        this.serverLevel().getChunkSource().broadcastAndSend(target, new ClientboundAnimatePacket(target, 4));
      }
  
      @Override
      public void magicCrit(Entity target) {
--        this.getLevel().getChunkSource().broadcastAndSend(this, new ClientboundAnimatePacket(target, 5));
-+        this.getLevel().getChunkSource().broadcastAndSend(target, new ClientboundAnimatePacket(target, 5));
+-        this.serverLevel().getChunkSource().broadcastAndSend(this, new ClientboundAnimatePacket(target, 5));
++        this.serverLevel().getChunkSource().broadcastAndSend(target, new ClientboundAnimatePacket(target, 5));
      }
  
      @Override

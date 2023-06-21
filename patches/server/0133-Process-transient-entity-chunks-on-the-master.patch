@@ -5,10 +5,10 @@ Subject: [PATCH] Process transient entity chunks on the master
 
 
 diff --git a/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java b/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java
-index 4275d7999d64aea1435aa64587540708c6b6cdeb..abe551f18dec67752d8490b9708e69406370b7e5 100644
+index c1b2fbaf037a6b6d9e7a4b539a96fa421065e8f8..25a6264ff8912932975d24c2ae7c642a074a40fc 100644
 --- a/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java
 +++ b/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java
-@@ -1932,7 +1932,7 @@ public final class NewChunkHolder {
+@@ -1961,7 +1961,7 @@ public final class NewChunkHolder {
                      return false;
                  }
                  try {
@@ -17,7 +17,7 @@ index 4275d7999d64aea1435aa64587540708c6b6cdeb..abe551f18dec67752d8490b9708e6940
                  } catch (final Exception ex) {
                      LOGGER.error("Cannot merge transient entities for chunk (" + this.chunkX + "," + this.chunkZ + ") in world '" + this.world.getWorld().getName() + "', data on disk will be replaced", ex);
                  }
-@@ -1945,6 +1945,7 @@ public final class NewChunkHolder {
+@@ -1974,6 +1974,7 @@ public final class NewChunkHolder {
                      return false;
                  } else {
                      EntityStorage.copyEntities(mergeFrom, save);
@@ -26,7 +26,7 @@ index 4275d7999d64aea1435aa64587540708c6b6cdeb..abe551f18dec67752d8490b9708e6940
              }
              if (save == null && this.lastEntitySaveNull) {
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index 91187cb163e972fedef0c8bfbfe511a5a58b9076..eb0a9cc9ddb7997a61dd087bbd359386a8b33126 100644
+index c5f1d62d4512d84fc3f2758da6ef23ebfc420168..b2b566cb36beabd358213947fda54e0836968f8f 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -396,7 +396,7 @@ public class MultiPaper {

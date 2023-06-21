@@ -5,10 +5,10 @@ Subject: [PATCH] Only run PlayerArmorChangeEvent for local players
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index d50ac0a6fce982e81957dc29dd7d7221f0aed9b9..f48aee395962d27ca22aba2deeed250a1ee0d4b2 100644
+index 603a06edd77ccfdaa640a64bacfabefae6998bc4..74726b2969c817470d064f256124dcadd34ad902 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3184,7 +3184,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -3225,7 +3225,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
              if (this.equipmentHasChanged(itemstack, itemstack1)) {
                  // Paper start - PlayerArmorChangeEvent

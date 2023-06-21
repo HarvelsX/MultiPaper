@@ -5,10 +5,10 @@ Subject: [PATCH] Update external player spam counters
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 408111092ad5a735127e854e64140b7843eebf7c..76fb253b403721648c68de72c06e336a0991218e 100644
+index b7e8124a1d47c93fb4f03ab044535c2e489ea08e..35d9e676497e35677193f38083d0beb7b84be005 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -455,20 +455,23 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -456,20 +456,23 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          // Paper end
  
          //this.server.getProfiler().pop(); // Purpur
@@ -44,9 +44,9 @@ index 408111092ad5a735127e854e64140b7843eebf7c..76fb253b403721648c68de72c06e336a
 +        reduceSpamCounters();
 +// MultiPaper end
  
-         if (this.player.getLastActionTime() > 0L && this.server.getPlayerIdleTimeout() > 0 && Util.getMillis() - this.player.getLastActionTime() > (long) (this.server.getPlayerIdleTimeout() * 1000 * 60) && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits.
+         if (this.player.getLastActionTime() > 0L && this.server.getPlayerIdleTimeout() > 0 && Util.getMillis() - this.player.getLastActionTime() > (long) this.server.getPlayerIdleTimeout() * 1000L * 60L && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits.
              // Purpur start
-@@ -499,6 +502,25 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -500,6 +503,25 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          this.lastGoodZ = this.player.getZ();
      }
  
@@ -73,7 +73,7 @@ index 408111092ad5a735127e854e64140b7843eebf7c..76fb253b403721648c68de72c06e336a
      public boolean isAcceptingMessages() {
          return this.connection.isConnected();
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index 6292beb9c284be4c401a85e5cfa59743d564734f..43015a08a574857593bcef82eb3c7c60a3ac0856 100644
+index 28420ce2ec7ccbb34eec1a26df96192b10b14c42..de847de5e8d9bd96d213e83afd720d1a446b89d1 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -92,6 +92,8 @@ public class MultiPaper {

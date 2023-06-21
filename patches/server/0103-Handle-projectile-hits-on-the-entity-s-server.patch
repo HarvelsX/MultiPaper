@@ -5,7 +5,7 @@ Subject: [PATCH] Handle projectile hits on the entity's server
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
-index 995ee61e70444153cab2d261507d6459da40e747..e232ce854cd3c99bdc11590d3aa35e715e74bfd5 100644
+index 689c2be4a6fdb4f54b44914780c09cc1a166e6d0..fb81e7a49cc19f627383d3fe11c4863a977067bc 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/Projectile.java
 @@ -25,6 +25,9 @@ import net.minecraft.world.phys.HitResult;
@@ -26,7 +26,7 @@ index 995ee61e70444153cab2d261507d6459da40e747..e232ce854cd3c99bdc11590d3aa35e71
  
      // CraftBukkit start
      protected boolean hitCancelled = false;
-@@ -209,10 +213,22 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -221,10 +225,22 @@ public abstract class Projectile extends Entity implements TraceableEntity {
      }
      // CraftBukkit end
  
@@ -47,7 +47,7 @@ index 995ee61e70444153cab2d261507d6459da40e747..e232ce854cd3c99bdc11590d3aa35e71
 +            }
 +            // MultiPaper end
              this.onHitEntity((EntityHitResult) hitResult);
-             this.level.gameEvent(GameEvent.PROJECTILE_LAND, hitResult.getLocation(), GameEvent.Context.of(this, (BlockState) null));
+             this.level().gameEvent(GameEvent.PROJECTILE_LAND, hitResult.getLocation(), GameEvent.Context.of(this, (BlockState) null));
          } else if (movingobjectposition_enummovingobjecttype == HitResult.Type.BLOCK) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/ExternalServerPacketSerializer.java b/src/main/java/puregero/multipaper/externalserverprotocol/ExternalServerPacketSerializer.java
 index 772b670198316dca9f6796e2414eae907afd3d91..4f99b58e9d3da8ada83c80d13e476654fef71179 100644
@@ -63,7 +63,7 @@ index 772b670198316dca9f6796e2414eae907afd3d91..4f99b58e9d3da8ada83c80d13e476654
      private static void addPacket(Class<? extends ExternalServerPacket> clazz, Function<FriendlyByteBuf, ExternalServerPacket> deserializer) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/ProjectileHitEntityPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/ProjectileHitEntityPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..652aca1aac9f9188791945e03a76335a9fb167b3
+index 0000000000000000000000000000000000000000..21583cde561a47dfb76b2e3abc5d3ce795b2a741
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/ProjectileHitEntityPacket.java
 @@ -0,0 +1,76 @@
@@ -95,7 +95,7 @@ index 0000000000000000000000000000000000000000..652aca1aac9f9188791945e03a76335a
 +    private final Vec3 location;
 +
 +    public ProjectileHitEntityPacket(Projectile projectile, Entity entity, Vec3 location) {
-+        this.world = projectile.level.getWorld().getName();
++        this.world = projectile.level().getWorld().getName();
 +        this.uuid = projectile.getUUID();
 +        this.entityUuid = entity.getUUID();
 +        this.location = location;

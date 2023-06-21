@@ -5,7 +5,7 @@ Subject: [PATCH] Save lightning bolt data
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LightningBolt.java b/src/main/java/net/minecraft/world/entity/LightningBolt.java
-index 0142aff35dea5bf5aff55e3293fb2d173c97e677..b7fdf44a1424d4c1d570c0a194e1ae8df2ba0230 100644
+index cdf1899f1e9978fcf58f05b1efb3165e55445f93..b030bef5440d388484da7d038f805e552c8eaf02 100644
 --- a/src/main/java/net/minecraft/world/entity/LightningBolt.java
 +++ b/src/main/java/net/minecraft/world/entity/LightningBolt.java
 @@ -274,10 +274,34 @@ public class LightningBolt extends Entity {
@@ -22,7 +22,7 @@ index 0142aff35dea5bf5aff55e3293fb2d173c97e677..b7fdf44a1424d4c1d570c0a194e1ae8d
 +        this.isSilent = nbt.getBoolean("IsSilent");
 +
 +        if (nbt.hasUUID("Cause")) {
-+            this.cause = level.getServer().getPlayerList().getPlayer(nbt.getUUID("Cause"));
++            this.cause = level().getServer().getPlayerList().getPlayer(nbt.getUUID("Cause"));
 +        }
 +        // MultiPaper end
 +    }

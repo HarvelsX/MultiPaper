@@ -5,14 +5,14 @@ Subject: [PATCH] Add zstd compression
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index afc967b20fb299626747aad81fb727622d26f888..cb77f5b59e4a39cbbc6f45bbecd46bbb1d0ce1e8 100644
+index 406260fe71aa36393521d91c27c318143b9c86d2..703d1f4d9bda92508de07ff12cac05581c4f3a40 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -46,6 +46,7 @@ dependencies {
-     runtimeOnly("org.apache.maven:maven-resolver-provider:3.8.5")
-     runtimeOnly("org.apache.maven.resolver:maven-resolver-connector-basic:1.7.3")
-     runtimeOnly("org.apache.maven.resolver:maven-resolver-transport-http:1.7.3")
-+    implementation("com.github.luben:zstd-jni:1.5.2-2") // MultiPaper
+@@ -52,6 +52,7 @@ dependencies {
+     runtimeOnly("org.apache.maven:maven-resolver-provider:3.9.2")
+     runtimeOnly("org.apache.maven.resolver:maven-resolver-connector-basic:1.9.10")
+     runtimeOnly("org.apache.maven.resolver:maven-resolver-transport-http:1.9.10")
++    implementation("com.github.luben:zstd-jni:1.5.5-4") // MultiPaper
  
      // Pufferfish start
      implementation("org.yaml:snakeyaml:1.32")
@@ -135,10 +135,10 @@ index 0000000000000000000000000000000000000000..059c862e6b521f42b979f5297d9970db
 +}
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/ZstdCompressionEncoder.java b/src/main/java/puregero/multipaper/externalserverprotocol/ZstdCompressionEncoder.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5d403cf567493d5b289b9a6eb3cc3266707ff999
+index 0000000000000000000000000000000000000000..2995b2b16010ba686a86332c103fa07ba0e65ebb
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/ZstdCompressionEncoder.java
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,33 @@
 +package puregero.multipaper.externalserverprotocol;
 +
 +import com.github.luben.zstd.Zstd;
@@ -150,7 +150,8 @@ index 0000000000000000000000000000000000000000..5d403cf567493d5b289b9a6eb3cc3266
 +
 +import java.nio.ByteBuffer;
 +
-+public class ZstdCompressionEncoder extends MessageToByteEncoder<ByteBuf> {
++public class
++ZstdCompressionEncoder extends MessageToByteEncoder<ByteBuf> {
 +    public static final int COMPRESSION_LEVEL = 3;
 +
 +    @Override

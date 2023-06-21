@@ -5,7 +5,7 @@ Subject: [PATCH] Add option to not save lighting updates
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkHolder.java b/src/main/java/net/minecraft/server/level/ChunkHolder.java
-index d497283cc468daf9a35baf2be72de3b8d7d71518..4de86df9d9c980ec1c800c2bd76fb19b4c2b8a31 100644
+index d42fcc465a25566aa5a076dd3176cfef0b597fcf..7a7308346e99ab62658162d9d4dfdf37ec3cf299 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkHolder.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkHolder.java
 @@ -45,6 +45,7 @@ import net.minecraft.server.MinecraftServer;
@@ -16,7 +16,7 @@ index d497283cc468daf9a35baf2be72de3b8d7d71518..4de86df9d9c980ec1c800c2bd76fb19b
  
  public class ChunkHolder {
  
-@@ -239,6 +240,7 @@ public class ChunkHolder {
+@@ -282,6 +283,7 @@ public class ChunkHolder {
          LevelChunk chunk = this.getSendingChunk(); // Paper - no-tick view distance
  
          if (chunk != null) {

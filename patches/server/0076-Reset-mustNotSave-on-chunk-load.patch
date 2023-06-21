@@ -5,10 +5,10 @@ Subject: [PATCH] Reset mustNotSave on chunk load
 
 
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 13833f76c2ce1e1bc171e8883340ed8227ae6e42..26895f7627820f8643156a6a0b3d7438df163d28 100644
+index 3d2324759bc154d369fa6d84671397d244802f3c..cae24e0cd477df6d83561e0d300038f8c31b53b8 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -926,6 +926,7 @@ public class LevelChunk extends ChunkAccess {
+@@ -896,6 +896,7 @@ public class LevelChunk extends ChunkAccess {
      // CraftBukkit start
      public void loadCallback() {
          if (this.loadedTicketLevel) { LOGGER.error("Double calling chunk load!", new Throwable()); } // Paper

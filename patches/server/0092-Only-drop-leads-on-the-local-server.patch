@@ -5,10 +5,10 @@ Subject: [PATCH] Only drop leads on the local server
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/Mob.java b/src/main/java/net/minecraft/world/entity/Mob.java
-index 898ad09fbe8176348a578629dcb11c8963756a02..b298a324d82701d1fa38c56dd1c54662c87c8196 100644
+index d404426aede295e1003afb4cbe7bd316beee6f13..cdf033009a0e61040fa689bac1a7147ba75a5dca 100644
 --- a/src/main/java/net/minecraft/world/entity/Mob.java
 +++ b/src/main/java/net/minecraft/world/entity/Mob.java
-@@ -85,6 +85,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
+@@ -84,6 +84,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
  import org.bukkit.event.entity.EntityTransformEvent;
  import org.bukkit.event.entity.EntityUnleashEvent;
  import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
@@ -16,12 +16,12 @@ index 898ad09fbe8176348a578629dcb11c8963756a02..b298a324d82701d1fa38c56dd1c54662
  // CraftBukkit end
  
  public abstract class Mob extends LivingEntity implements Targeting {
-@@ -1533,7 +1534,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
+@@ -1535,7 +1536,7 @@ public abstract class Mob extends LivingEntity implements Targeting {
          if (this.leashHolder != null) {
              this.leashHolder = null;
              this.leashInfoTag = null;
--            if (!this.level.isClientSide && dropItem) {
-+            if (!this.level.isClientSide && dropItem && MultiPaper.isChunkLocal(level.getChunkIfLoaded(blockPosition))) { // MultiPaper - only drop leads on the local server
+-            if (!this.level().isClientSide && dropItem) {
++            if (!this.level().isClientSide && dropItem && MultiPaper.isChunkLocal(level().getChunkIfLoaded(blockPosition))) { // MultiPaper - only drop leads on the local server
                  this.forceDrops = true; // CraftBukkit
                  this.spawnAtLocation((ItemLike) Items.LEAD);
                  this.forceDrops = false; // CraftBukkit

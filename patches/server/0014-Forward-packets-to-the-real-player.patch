@@ -5,7 +5,7 @@ Subject: [PATCH] Forward packets to the real player
 
 
 diff --git a/src/main/java/puregero/multipaper/ExternalPlayer.java b/src/main/java/puregero/multipaper/ExternalPlayer.java
-index 3a0d3c035376d810caf00079ba601d27d5047138..aa1b0c76f0908ce2936833a788066a4621b2fedc 100644
+index 0ce5fa596c3c53c969b2c5e8f36c946990fbda5a..479aecfbfd272f806821b16d9f8eb8de72aad8b0 100644
 --- a/src/main/java/puregero/multipaper/ExternalPlayer.java
 +++ b/src/main/java/puregero/multipaper/ExternalPlayer.java
 @@ -5,6 +5,7 @@ import net.minecraft.network.Connection;
@@ -16,7 +16,7 @@ index 3a0d3c035376d810caf00079ba601d27d5047138..aa1b0c76f0908ce2936833a788066a46
  import net.minecraft.server.level.ServerLevel;
  import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.server.network.ServerGamePacketListenerImpl;
-@@ -75,11 +76,23 @@ public class ExternalPlayer extends ServerPlayer {
+@@ -74,11 +75,23 @@ public class ExternalPlayer extends ServerPlayer {
  
          @Override
          public void send(Packet<?> packet, @Nullable PacketSendListener packetsendlistener) {
@@ -106,7 +106,7 @@ index 7dc391159a2a6d116fd3d1ea34d7b766f9add714..83736cca003bf96271153700a89fcee3
 +    }
  }
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index 794f96048974381edd428ed69a550e818de63c5f..136a7bb726afef1ee199b066eec8ebecf7ef13b1 100644
+index 049e94daaff596cb8fa0bc56ecd62189508a2439..46db7eda31346d2654483ae2cec264890632593c 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -44,6 +44,13 @@ public class MultiPaper {

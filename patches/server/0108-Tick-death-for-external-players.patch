@@ -5,16 +5,16 @@ Subject: [PATCH] Tick death for external players
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index f6eeb0088a9f3502b3a96629b272011ac5e7e356..d50ac0a6fce982e81957dc29dd7d7221f0aed9b9 100644
+index d26bdcd1eaad6c909c4fcb669e8c28c49945333e..603a06edd77ccfdaa640a64bacfabefae6998bc4 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -622,6 +622,14 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -640,6 +640,14 @@ public abstract class LivingEntity extends Entity implements Attackable {
          return true;
      }
  
 +    // MultiPaper
 +    public void tickDeathIfDead() {
-+        if (this.isDeadOrDying() && this.level.shouldTickDeath(this)) {
++        if (this.isDeadOrDying() && this.level().shouldTickDeath(this)) {
 +            this.tickDeath();
 +        }
 +    }
@@ -22,9 +22,9 @@ index f6eeb0088a9f3502b3a96629b272011ac5e7e356..d50ac0a6fce982e81957dc29dd7d7221
 +
      protected void tickDeath() {
          ++this.deathTime;
-         if (this.deathTime >= 20 && !this.level.isClientSide() && !this.isRemoved()) {
+         if (this.deathTime >= 20 && !this.level().isClientSide() && !this.isRemoved()) {
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index 0251479932cf25af6f34ddf168fdf7b5a80f8c00..668555367671c566c2b6e8d7d2abbf05be6397be 100644
+index de847de5e8d9bd96d213e83afd720d1a446b89d1..b6bd8dc6058fa67a96906a2f36f76f9f85c744f0 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -89,6 +89,8 @@ public class MultiPaper {

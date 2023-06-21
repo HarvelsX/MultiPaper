@@ -5,10 +5,10 @@ Subject: [PATCH] Destroy blocks on external servers
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index c87afb93983fd241e3767517e2b35741da773a1d..9fec947979e3b82c032ab349f5b41b1a62218aef 100644
+index 1784e0d5f16dbdd4bbd382c96964595379d76e61..918d6981406c2f0d61cb54ca25850f275950b164 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -247,6 +247,7 @@ public class ServerPlayer extends Player {
+@@ -249,6 +249,7 @@ public class ServerPlayer extends Player {
      private int containerCounter;
      @Nullable public ExternalServer openContainer; // MultiPaper
      public int latency;
@@ -17,7 +17,7 @@ index c87afb93983fd241e3767517e2b35741da773a1d..9fec947979e3b82c032ab349f5b41b1a
      public int containerUpdateDelay; // Paper // MultiPaper - make public
      public long loginTime; // Paper
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index 75f29f6dddf50ccf7ef43ecfa602ccade3c9004d..e584b2047507d2edcb11eacd399c10c73d1739c2 100644
+index 02f615e797ac22b8a6226233d815346ca09c3173..887941931f48eada6f9f5239cae3ac2c5fc829a8 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -3,6 +3,8 @@ package net.minecraft.server.level;
@@ -39,7 +39,7 @@ index 75f29f6dddf50ccf7ef43ecfa602ccade3c9004d..e584b2047507d2edcb11eacd399c10c7
  // CraftBukkit end
  
  public class ServerPlayerGameMode {
-@@ -333,6 +338,15 @@ public class ServerPlayerGameMode {
+@@ -334,6 +339,15 @@ public class ServerPlayerGameMode {
      }
  
      public void destroyAndAck(BlockPos pos, int sequence, String reason) {
@@ -55,7 +55,7 @@ index 75f29f6dddf50ccf7ef43ecfa602ccade3c9004d..e584b2047507d2edcb11eacd399c10c7
          if (this.destroyBlock(pos)) {
              this.debugLogging(pos, true, sequence, reason);
          } else {
-@@ -343,6 +357,13 @@ public class ServerPlayerGameMode {
+@@ -344,6 +358,13 @@ public class ServerPlayerGameMode {
      }
  
      public boolean destroyBlock(BlockPos pos) {
@@ -70,13 +70,13 @@ index 75f29f6dddf50ccf7ef43ecfa602ccade3c9004d..e584b2047507d2edcb11eacd399c10c7
          // CraftBukkit start - fire BlockBreakEvent
          org.bukkit.block.Block bblock = CraftBlock.at(level, pos);
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 76fb253b403721648c68de72c06e336a0991218e..437a2abaa6b75d78e847fd077227e09abe3d2644 100644
+index 35d9e676497e35677193f38083d0beb7b84be005..990265aacccd49fd74b807c9000363fe531114f8 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1988,6 +1988,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -1991,6 +1991,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
                  this.player.gameMode.captureSentBlockEntities = true;
                  // Paper end - send block entities after prediction
-                 this.player.gameMode.handleBlockBreakAction(blockposition, packetplayinblockdig_enumplayerdigtype, packet.getDirection(), this.player.level.getMaxBuildHeight(), packet.getSequence());
+                 this.player.gameMode.handleBlockBreakAction(blockposition, packetplayinblockdig_enumplayerdigtype, packet.getDirection(), this.player.level().getMaxBuildHeight(), packet.getSequence());
 +                if (this.player.destroyAndAckHandledByExternalServer) this.player.destroyAndAckHandledByExternalServer = false; else // MultiPaper
                  this.player.connection.ackBlockChangesUpTo(packet.getSequence());
                  // Paper start - send block entities after prediction

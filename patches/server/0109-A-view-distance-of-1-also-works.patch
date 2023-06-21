@@ -4,25 +4,78 @@ Date: Wed, 6 Apr 2022 20:30:56 +1000
 Subject: [PATCH] A view distance of 1 also works
 
 
-diff --git a/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java b/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
-index bf4f7f91f8c8f09aa17e3989cff2e7cb1059b587..ace7e7d2243c97d5e561a753f58e7ad4d092bd2c 100644
---- a/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
-+++ b/src/main/java/io/papermc/paper/chunk/PlayerChunkLoader.java
-@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
+diff --git a/src/main/java/io/papermc/paper/chunk/system/RegionizedPlayerChunkLoader.java b/src/main/java/io/papermc/paper/chunk/system/RegionizedPlayerChunkLoader.java
+index 924539d4ac50c70178ba220424ffacd6ff277c8b..c45423dc0e2e447a739a647582ca53ce0437b768 100644
+--- a/src/main/java/io/papermc/paper/chunk/system/RegionizedPlayerChunkLoader.java
++++ b/src/main/java/io/papermc/paper/chunk/system/RegionizedPlayerChunkLoader.java
+@@ -41,7 +41,7 @@ public class RegionizedPlayerChunkLoader {
  
- public final class PlayerChunkLoader {
+     public static final TicketType<Long> REGION_PLAYER_TICKET = TicketType.create("region_player_ticket", Long::compareTo);
  
 -    public static final int MIN_VIEW_DISTANCE = 2;
 +    public static final int MIN_VIEW_DISTANCE = 1; // MultiPaper - minimum can actually be 1
      public static final int MAX_VIEW_DISTANCE = 32;
  
      public static final int TICK_TICKET_LEVEL = 31;
-@@ -227,7 +227,7 @@ public final class PlayerChunkLoader {
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index 76a612ae6b783a9b712d05b5ae4f4f857532e4a1..db49546ead54c06bcd0badda9c32fca1079210b2 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -543,7 +543,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
      }
  
-     public void setTickDistance(final int distance) {
--        if (distance < MIN_VIEW_DISTANCE || distance > MAX_VIEW_DISTANCE) {
-+        if (distance < MIN_VIEW_DISTANCE || distance > MAX_VIEW_DISTANCE) { // MultiPaper - minimum is actually 1. This line is unchanged by MultiPaper, but is marked to track changes to the minimum value
-             throw new IllegalArgumentException("View distance must be a number between " + MIN_VIEW_DISTANCE + " and " + MAX_VIEW_DISTANCE + ", got: " + distance);
+     public void setTickViewDistance(final int distance) {
+-        if ((distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE)) {
++        if ((distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE)) { // MultiPaper - minimum is actually 1. This line is unchanged by MultiPaper, but is marked to track changes to the minimum value
+             throw new IllegalArgumentException("Tick view distance must be a number between " + io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE + " and " + (io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE) + ", got: " + distance);
          }
-         this.rawTickDistance = distance;
+         this.updateViewDistance((input) -> {
+@@ -552,7 +552,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+     }
+ 
+     public void setLoadViewDistance(final int distance) {
+-        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) {
++        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) { // MultiPaper - minimum is actually 1. This line is unchanged by MultiPaper, but is marked to track changes to the minimum value
+             throw new IllegalArgumentException("Load view distance must be a number between " + io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE + " and " + (io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1) + " or -1, got: " + distance);
+         }
+         this.updateViewDistance((input) -> {
+@@ -561,7 +561,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+     }
+ 
+     public void setSendViewDistance(final int distance) {
+-        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) {
++        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) { // MultiPaper - minimum is actually 1. This line is unchanged by MultiPaper, but is marked to track changes to the minimum value
+             throw new IllegalArgumentException("Send view distance must be a number between " + io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE + " and " + (io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1) + " or -1, got: " + distance);
+         }
+         this.updateViewDistance((input) -> {
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 918d6981406c2f0d61cb54ca25850f275950b164..c64aa34050e24bcb12a6258d84a2df83b682d229 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -306,7 +306,7 @@ public class ServerPlayer extends Player {
+     }
+ 
+     public void setTickViewDistance(final int distance) {
+-        if ((distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE)) {
++        if ((distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE)) { // MultiPaper - minimum is actually 1. This line is unchanged by MultiPaper, but is marked to track changes to the minimum value
+             throw new IllegalArgumentException("Tick view distance must be a number between " + io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE + " and " + (io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE) + ", got: " + distance);
+         }
+         this.updateViewDistance((input) -> {
+@@ -315,7 +315,7 @@ public class ServerPlayer extends Player {
+     }
+ 
+     public void setLoadViewDistance(final int distance) {
+-        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) {
++        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) { // MultiPaper - minimum is actually 1. This line is unchanged by MultiPaper, but is marked to track changes to the minimum value
+             throw new IllegalArgumentException("Load view distance must be a number between " + io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE + " and " + (io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1) + " or -1, got: " + distance);
+         }
+         this.updateViewDistance((input) -> {
+@@ -324,7 +324,7 @@ public class ServerPlayer extends Player {
+     }
+ 
+     public void setSendViewDistance(final int distance) {
+-        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) {
++        if (distance != -1 && (distance < io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE || distance > io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1)) { // MultiPaper - minimum is actually 1. This line is unchanged by MultiPaper, but is marked to track changes to the minimum value
+             throw new IllegalArgumentException("Send view distance must be a number between " + io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MIN_VIEW_DISTANCE + " and " + (io.papermc.paper.chunk.system.RegionizedPlayerChunkLoader.MAX_VIEW_DISTANCE + 1) + " or -1, got: " + distance);
+         }
+         this.updateViewDistance((input) -> {

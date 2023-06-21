@@ -6,20 +6,10 @@ Subject: [PATCH] Add temporary debug logs to check if a chunk can be not fully
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index 89f123f4f54e47e139c584bc79a991c68b9c369e..df272ee0407bb398dc29ca335f2a152456298ce5 100644
+index aa86da608e4c61a384319800af73a56e197dcc43..2e201287a41932be032a600e6a57d3d463359ffa 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -198,6 +198,9 @@ public class ServerChunkCache extends ChunkSource {
-         // try to fire sync
-         int chunkStatusTicketLevel = 33 + ChunkStatus.getDistance(status);
-         ChunkHolder playerChunk = this.chunkMap.getUpdatingChunkIfPresent(io.papermc.paper.util.CoordinateUtils.getChunkKey(chunkX, chunkZ));
-+        if (playerChunk == null && this.chunkMap.getVisibleChunkIfPresent(io.papermc.paper.util.CoordinateUtils.getChunkKey(chunkX, chunkZ)) != null) {
-+            LOGGER.warn("Trying to load chunk asynchronously but it's a visible chunk " + chunkX + "," + chunkZ);
-+        }
-         if (playerChunk != null) {
-             ChunkStatus holderStatus = playerChunk.getChunkHolderStatus();
-             ChunkAccess immediate = playerChunk.getAvailableChunkNow();
-@@ -771,6 +774,14 @@ public class ServerChunkCache extends ChunkSource {
+@@ -622,6 +622,14 @@ public class ServerChunkCache extends ChunkSource {
                  // Paper end - optimise chunk tick iteration
                  ChunkPos chunkcoordintpair = chunk1.getPos();
  

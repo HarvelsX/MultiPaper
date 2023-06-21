@@ -5,19 +5,10 @@ Subject: [PATCH] Sync player cameras
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index db0fc4d75b02d6fde18aa206b6f65cc377df3b13..27772ce161695bb564d419c05660a153ef89fddd 100644
+index 6b0dffd49b460a15663dcb0f5cf40cba2787805d..6314e14db58a858107d6d951ab414de51ae68ddc 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -1962,7 +1962,7 @@ public class ServerPlayer extends Player {
-     public void moveTo(double x, double y, double z) {
-         this.teleportTo(x, y, z);
-         this.connection.resetPosition();
--    }
-+}
- 
-     @Override
-     public void crit(Entity target) {
-@@ -2258,6 +2258,8 @@ public class ServerPlayer extends Player {
+@@ -2310,6 +2310,8 @@ public class ServerPlayer extends Player {
  
              this.connection.send(new ClientboundSetCameraPacket(this.camera));
              this.connection.resetPosition();
@@ -40,7 +31,7 @@ index c98c3235a7f82fafaf084a59f8b4fab62c9ecc91..dda10372b067684167c455b08dbc4ff5
      private static void addPacket(Class<? extends ExternalServerPacket> clazz, Function<FriendlyByteBuf, ExternalServerPacket> deserializer) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/PlayerSetCameraPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerSetCameraPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..5328f19ffd573098fd71adb97c0b638272a22469
+index 0000000000000000000000000000000000000000..562f6201dc87cb00828a63c64584e856cc4e7900
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerSetCameraPacket.java
 @@ -0,0 +1,50 @@
@@ -87,7 +78,7 @@ index 0000000000000000000000000000000000000000..5328f19ffd573098fd71adb97c0b6382
 +            handlingSetCamera = true;
 +
 +            ServerPlayer player = MinecraftServer.getServer().getPlayerList().getPlayer(uuid);
-+            Entity entity = player.getLevel().getEntity(uuidCamera);
++            Entity entity = player.serverLevel().getEntity(uuidCamera);
 +            player.setCamera(entity);
 +
 +            handlingSetCamera = false;

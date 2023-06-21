@@ -5,7 +5,7 @@ Subject: [PATCH] Only save non-modified chunks
 
 
 diff --git a/src/main/java/ca/spottedleaf/starlight/common/light/StarLightEngine.java b/src/main/java/ca/spottedleaf/starlight/common/light/StarLightEngine.java
-index 1b0d92c68407cdb09ed8aac271b625d92db87017..5ff206a1e92c13312989e07b2154bc0787da5599 100644
+index ad1eeebe6de219143492b94da309cb54ae9e0a5b..03e147d5ef718433e2210a800e001609b814cd46 100644
 --- a/src/main/java/ca/spottedleaf/starlight/common/light/StarLightEngine.java
 +++ b/src/main/java/ca/spottedleaf/starlight/common/light/StarLightEngine.java
 @@ -427,6 +427,8 @@ public abstract class StarLightEngine {
@@ -85,10 +85,10 @@ index 55ca70ac01a8586c66f49c71e21399bba96f5636..69ae13b0d2c5bb0deab6ab53449a412b
          this.getFluidTicks().schedule(this.createTick(pos, fluid, delay));
      }
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-index 4f1d9432f1b4dfbfb0bbe5b758ab97b5d82541ce..d8128b5edd3cf99f237e125f081ad6d66d21593d 100644
+index 366fb0193687c0b48fe22dcea76d2fc4ca6c457d..744ebf8ad2159bee62160134048a6830c00b7834 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -389,6 +389,7 @@ public class ChunkSerializer {
+@@ -352,6 +352,7 @@ public class ChunkSerializer {
  
          ((ChunkAccess) object1).setAllStarts(ChunkSerializer.unpackStructureStart(StructurePieceSerializationContext.fromLevel(world), nbttagcompound3, world.getSeed()));
          ((ChunkAccess) object1).setAllReferences(ChunkSerializer.unpackStructureReferences(world.registryAccess(), chunkPos, nbttagcompound3));

@@ -5,7 +5,7 @@ Subject: [PATCH] Only touch tridents that we are ticking
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
-index fb6e590e4613f59aaa8278932134aa0ca3d9da8f..ceb990a5ad623888b042b9501c665e9c9c69c27a 100644
+index 0ea182962d6647629fc98c9e7406f7b7ce012c5e..ae0af7702f24e763f7ec4fd8272e2f73bb63a4af 100644
 --- a/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
 +++ b/src/main/java/net/minecraft/world/entity/projectile/ThrownTrident.java
 @@ -22,6 +22,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -20,7 +20,7 @@ index fb6e590e4613f59aaa8278932134aa0ca3d9da8f..ceb990a5ad623888b042b9501c665e9c
  
      @Override
      public void playerTouch(Player player) {
-+        if (MultiPaper.isChunkLocal(level.getChunkIfLoaded(blockPosition))) // MultiPaper - ensure we're still ticking this entity
++        if (MultiPaper.isChunkLocal(level().getChunkIfLoaded(blockPosition))) // MultiPaper - ensure we're still ticking this entity
          if (this.ownedBy(player) || this.getOwner() == null) {
              super.playerTouch(player);
          }

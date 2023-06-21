@@ -17,10 +17,10 @@ index 745e792482f61c571e2efbd4200dd1bdaef6e474..fdc0c8e5cc901a010f9733f4a25cf7cf
      }
  
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index f620e3373bcd8f1ffa036d1ad385446c42b7c6ff..f6eeb0088a9f3502b3a96629b272011ac5e7e356 100644
+index 843a0983b59aaaa30315f9da2832f598a542a79f..d26bdcd1eaad6c909c4fcb669e8c28c49945333e 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -141,6 +141,7 @@ import org.bukkit.event.entity.EntityTeleportEvent;
+@@ -143,6 +143,7 @@ import org.bukkit.event.entity.EntityTeleportEvent;
  import org.bukkit.event.player.PlayerItemConsumeEvent;
  import puregero.multipaper.ExternalServerConnection;
  import puregero.multipaper.MultiPaper;
@@ -28,26 +28,31 @@ index f620e3373bcd8f1ffa036d1ad385446c42b7c6ff..f6eeb0088a9f3502b3a96629b272011a
  import puregero.multipaper.MultiPaperEntityInteractHandler;
  import puregero.multipaper.externalserverprotocol.EntityUpdatePacket;
  import puregero.multipaper.externalserverprotocol.HurtEntityPacket;
-@@ -1270,29 +1271,32 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1288,11 +1289,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
      protected void onEffectAdded(MobEffectInstance effect, @Nullable Entity source) {
          this.effectsDirty = true;
--        if (!this.level.isClientSide) {
-+        if (!this.level.isClientSide && !MultiPaper.isExternalPlayer(this)) { // MultiPaper
+-        if (!this.level().isClientSide) {
++        if (!this.level().isClientSide && !MultiPaper.isExternalPlayer(this)) { // MultiPaper
              effect.getEffect().addAttributeModifiers(this, this.getAttributes(), effect.getAmplifier());
+             this.sendEffectToPassengers(effect);
          }
  
 +        MultiPaperEffectsHandler.onEffectAdd(this, effect); // MultiPaper
      }
  
+     public void sendEffectToPassengers(MobEffectInstance effect) {
+@@ -1312,7 +1314,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+ 
      protected void onEffectUpdated(MobEffectInstance effect, boolean reapplyEffect, @Nullable Entity source) {
          this.effectsDirty = true;
--        if (reapplyEffect && !this.level.isClientSide) {
+-        if (reapplyEffect && !this.level().isClientSide) {
 +        if (reapplyEffect && !MultiPaper.isExternalPlayer(this)) { // MultiPaper
              MobEffect mobeffectlist = effect.getEffect();
  
              mobeffectlist.removeAttributeModifiers(this, this.getAttributes(), effect.getAmplifier());
-             mobeffectlist.addAttributeModifiers(this, this.getAttributes(), effect.getAmplifier());
+@@ -1323,11 +1325,12 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             this.sendEffectToPassengers(effect);
          }
  
 +        MultiPaperEffectsHandler.onEffectAdd(this, effect); // MultiPaper
@@ -55,9 +60,13 @@ index f620e3373bcd8f1ffa036d1ad385446c42b7c6ff..f6eeb0088a9f3502b3a96629b272011a
  
      protected void onEffectRemoved(MobEffectInstance effect) {
          this.effectsDirty = true;
--        if (!this.level.isClientSide) {
-+        if (!this.level.isClientSide && !MultiPaper.isExternalPlayer(this)) { // MultiPaper
+-        if (!this.level().isClientSide) {
++        if (!this.level().isClientSide && !MultiPaper.isExternalPlayer(this)) { // MultiPaper
              effect.getEffect().removeAttributeModifiers(this, this.getAttributes(), effect.getAmplifier());
+             Iterator iterator = this.getPassengers().iterator();
+ 
+@@ -1342,6 +1345,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             }
          }
  
 +        MultiPaperEffectsHandler.onEffectRemove(this, effect); // MultiPaper
@@ -126,7 +135,7 @@ index 0000000000000000000000000000000000000000..271550f662434fbd83b7d6c422de72d7
 +}
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/EntityUpdateEffectPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/EntityUpdateEffectPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..38c8469e96a680b74a36c096bdbbfd1ffce75ac8
+index 0000000000000000000000000000000000000000..141c9966ede5c0c02ced618bdcd25c40a3a5c1ef
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/EntityUpdateEffectPacket.java
 @@ -0,0 +1,69 @@
@@ -154,7 +163,7 @@ index 0000000000000000000000000000000000000000..38c8469e96a680b74a36c096bdbbfd1f
 +    private final byte[] data;
 +
 +    public EntityUpdateEffectPacket(Entity entity, MobEffectInstance effect, boolean remove) {
-+        this.world = ((ServerLevel) entity.level).convertable.getLevelId();
++        this.world = ((ServerLevel) entity.level()).convertable.getLevelId();
 +        this.uuid = entity.getUUID();
 +        this.remove = remove;
 +

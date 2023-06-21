@@ -5,10 +5,10 @@ Subject: [PATCH] Sync respawn locations
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 27772ce161695bb564d419c05660a153ef89fddd..87286677e0effaa026fb0220d0ad482aa881b14c 100644
+index 6314e14db58a858107d6d951ab414de51ae68ddc..20d33ba99fbe143244918ee9937408f754ffc16c 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -229,11 +229,11 @@ public class ServerPlayer extends Player {
+@@ -231,11 +231,11 @@ public class ServerPlayer extends Player {
      @Nullable
      private Vec3 enteredLavaOnVehiclePosition;
      private SectionPos lastSectionPos;
@@ -24,7 +24,7 @@ index 27772ce161695bb564d419c05660a153ef89fddd..87286677e0effaa026fb0220d0ad482a
      private final TextFilter textFilter;
      private boolean textFilteringEnabled;
      private boolean allowsListing;
-@@ -2400,6 +2400,8 @@ public class ServerPlayer extends Player {
+@@ -2463,6 +2463,8 @@ public class ServerPlayer extends Player {
              this.respawnForced = false;
          }
  
@@ -46,7 +46,7 @@ index dda10372b067684167c455b08dbc4ff582b76af0..be7a8e59e572dc428f1a10d6df4d0d9a
  
      private static void addPacket(Class<? extends ExternalServerPacket> clazz, Function<FriendlyByteBuf, ExternalServerPacket> deserializer) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/PlayerCreatePacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerCreatePacket.java
-index f67ceb93ee14ed6ec61253bc13e0e05d42919e27..0c87d83ca2da111ada24c725699e28208654f279 100644
+index 7483af8ae9738daf100c05e5738c6c9d8cc72741..f471107a1f40265addce93155c7aef7b0a7a058e 100644
 --- a/src/main/java/puregero/multipaper/externalserverprotocol/PlayerCreatePacket.java
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerCreatePacket.java
 @@ -159,6 +159,7 @@ public class PlayerCreatePacket extends ExternalServerPacket {

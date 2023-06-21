@@ -6,10 +6,10 @@ Subject: [PATCH] Fix cross-server Ender Dragon sword hit.
 Made UUID and ID of dragon parts deterministic.
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index 59d0a73a4120ea63f4d5fa6cfbe00a04106e8d4e..f9a092a2a241ced5201d03fda8a7b5393d06db1d 100644
+index 01bdf4d85ec839bf11a65ca477cc7d3e2877b340..de4dbbe6a540985f2a58c9d358f3636ab1ae964b 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -1982,6 +1982,22 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -2125,6 +2125,22 @@ public class ServerLevel extends Level implements WorldGenLevel {
          return entity != null ? entity : (Entity) this.dragonParts.get(id);
      }
  
@@ -33,7 +33,7 @@ index 59d0a73a4120ea63f4d5fa6cfbe00a04106e8d4e..f9a092a2a241ced5201d03fda8a7b539
      public Entity getEntity(UUID uuid) {
          return (Entity) this.getEntities().get(uuid);
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index daae9bb1c9f7e93a6af2dfd50c56ce2a20bb074b..5570ffa47a0fec0187611fa45e866bc44becff5b 100644
+index 73207eb468b1e5a8eb2be490206378a058cdde60..36e9eb9b4b199402145118f24441d5833c874e8b 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
 @@ -81,6 +81,7 @@ import net.minecraft.world.InteractionResult;
@@ -44,7 +44,7 @@ index daae9bb1c9f7e93a6af2dfd50c56ce2a20bb074b..5570ffa47a0fec0187611fa45e866bc4
  import net.minecraft.world.entity.item.ItemEntity;
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.entity.vehicle.Boat;
-@@ -2498,6 +2499,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -2638,6 +2639,7 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
                  this.uuid = nbt.getUUID("UUID");
                  this.stringUUID = this.uuid.toString();
              }
@@ -53,7 +53,7 @@ index daae9bb1c9f7e93a6af2dfd50c56ce2a20bb074b..5570ffa47a0fec0187611fa45e866bc4
              if (Double.isFinite(this.getX()) && Double.isFinite(this.getY()) && Double.isFinite(this.getZ())) {
                  if (Double.isFinite((double) this.getYRot()) && Double.isFinite((double) this.getXRot())) {
 diff --git a/src/main/java/net/minecraft/world/entity/boss/EnderDragonPart.java b/src/main/java/net/minecraft/world/entity/boss/EnderDragonPart.java
-index 998c72513df1dcd2b1316b320b3d5e7ca8e69fd4..7dc3669cf39a64514cf5f182261337eb08658487 100644
+index 4eebfc27ded55e4d764d04f35d3e9c9e0791c89f..fa73f4ff6c0abb7172f8bb266d02660fe090c698 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/EnderDragonPart.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/EnderDragonPart.java
 @@ -1,5 +1,9 @@
@@ -79,7 +79,7 @@ index 998c72513df1dcd2b1316b320b3d5e7ca8e69fd4..7dc3669cf39a64514cf5f182261337eb
  
 -    public EnderDragonPart(EnderDragon owner, String name, float width, float height) {
 +    public EnderDragonPart(EnderDragon owner, String name, float width, float height, String uuidSuffix) { // MultiPaper
-         super(owner.getType(), owner.level);
+         super(owner.getType(), owner.level());
          this.size = EntityDimensions.scalable(width, height);
          this.refreshDimensions();
          this.parentMob = owner;
@@ -117,7 +117,7 @@ index 998c72513df1dcd2b1316b320b3d5e7ca8e69fd4..7dc3669cf39a64514cf5f182261337eb
      @Override
      public net.minecraft.world.InteractionResult interact(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
 diff --git a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-index b6ac41633e91f6ee2755d1f05aac4c8046a4aa8a..362d9f355a9a32337ba9fe59856aa08bef441e15 100644
+index cf6330694b811cef743763e0915824df8f75fe27..57db52e661320f89b3e2833d9ccfe22116ae407d 100644
 --- a/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/src/main/java/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 @@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
@@ -128,32 +128,32 @@ index b6ac41633e91f6ee2755d1f05aac4c8046a4aa8a..362d9f355a9a32337ba9fe59856aa08b
  import javax.annotation.Nullable;
  import net.minecraft.core.BlockPos;
  import net.minecraft.core.particles.ParticleTypes;
-@@ -76,14 +77,16 @@ public class EnderDragon extends Mob implements Enemy {
-     public final double[][] positions = new double[64][3];
-     public int posPointer = -1;
-     public final EnderDragonPart[] subEntities;
--    public final EnderDragonPart head = new EnderDragonPart(this, "head", 1.0F, 1.0F);
--    private final EnderDragonPart neck = new EnderDragonPart(this, "neck", 3.0F, 3.0F);
--    private final EnderDragonPart body = new EnderDragonPart(this, "body", 5.0F, 3.0F);
--    private final EnderDragonPart tail1 = new EnderDragonPart(this, "tail", 2.0F, 2.0F);
--    private final EnderDragonPart tail2 = new EnderDragonPart(this, "tail", 2.0F, 2.0F);
--    private final EnderDragonPart tail3 = new EnderDragonPart(this, "tail", 2.0F, 2.0F);
--    private final EnderDragonPart wing1 = new EnderDragonPart(this, "wing", 4.0F, 2.0F);
--    private final EnderDragonPart wing2 = new EnderDragonPart(this, "wing", 4.0F, 2.0F);
-+    // MultiPaper start
-+    public final EnderDragonPart head = new EnderDragonPart(this, "head", 1.0F, 1.0F, "head");
-+    private final EnderDragonPart neck = new EnderDragonPart(this, "neck", 3.0F, 3.0F, "neck");
-+    private final EnderDragonPart body = new EnderDragonPart(this, "body", 5.0F, 3.0F, "body");
-+    private final EnderDragonPart tail1 = new EnderDragonPart(this, "tail", 2.0F, 2.0F, "tail1");
-+    private final EnderDragonPart tail2 = new EnderDragonPart(this, "tail", 2.0F, 2.0F, "tail2");
-+    private final EnderDragonPart tail3 = new EnderDragonPart(this, "tail", 2.0F, 2.0F, "tail3");
-+    private final EnderDragonPart wing1 = new EnderDragonPart(this, "wing", 4.0F, 2.0F, "wing1");
-+    private final EnderDragonPart wing2 = new EnderDragonPart(this, "wing", 4.0F, 2.0F, "wing2");
-+    // MultiPaper stop
-     public float oFlapTime;
-     public float flapTime;
-     public boolean inWall;
-@@ -139,9 +142,25 @@ public class EnderDragon extends Mob implements Enemy {
+@@ -115,14 +116,16 @@ public class EnderDragon extends Mob implements Enemy {
+         this.nodes = new Node[24];
+         this.nodeAdjacency = new int[24];
+         this.openSet = new BinaryHeap();
+-        this.head = new EnderDragonPart(this, "head", 1.0F, 1.0F);
+-        this.neck = new EnderDragonPart(this, "neck", 3.0F, 3.0F);
+-        this.body = new EnderDragonPart(this, "body", 5.0F, 3.0F);
+-        this.tail1 = new EnderDragonPart(this, "tail", 2.0F, 2.0F);
+-        this.tail2 = new EnderDragonPart(this, "tail", 2.0F, 2.0F);
+-        this.tail3 = new EnderDragonPart(this, "tail", 2.0F, 2.0F);
+-        this.wing1 = new EnderDragonPart(this, "wing", 4.0F, 2.0F);
+-        this.wing2 = new EnderDragonPart(this, "wing", 4.0F, 2.0F);
++        // MultiPaper start
++        this.head = new EnderDragonPart(this, "head", 1.0F, 1.0F, "head");
++        this.neck = new EnderDragonPart(this, "neck", 3.0F, 3.0F, "neck");
++        this.body = new EnderDragonPart(this, "body", 5.0F, 3.0F, "body");
++        this.tail1 = new EnderDragonPart(this, "tail", 2.0F, 2.0F, "tail1");
++        this.tail2 = new EnderDragonPart(this, "tail", 2.0F, 2.0F, "tail2");
++        this.tail3 = new EnderDragonPart(this, "tail", 2.0F, 2.0F, "tail3");
++        this.wing1 = new EnderDragonPart(this, "wing", 4.0F, 2.0F, "wing1");
++        this.wing2 = new EnderDragonPart(this, "wing", 4.0F, 2.0F, "wing2");
++        // MultiPaper stop
+         this.subEntities = new EnderDragonPart[]{this.head, this.neck, this.body, this.tail1, this.tail2, this.tail3, this.wing1, this.wing2};
+         this.setHealth(this.getMaxHealth());
+         this.noPhysics = true;
+@@ -147,9 +150,25 @@ public class EnderDragon extends Mob implements Enemy {
                  setYawPitch(rider.getYRot() - 180F, rider.xRotO * 0.5F);
              }
          };
@@ -218,7 +218,7 @@ index a7d863e6ccbcff3ccc3ef73e7335ffdd97a09907..3e0d78291cdf5da05ec7c855257433fc
          if (MultiPaperConfiguration.get().syncSettings.syncEntityIds) {
              Block block = entityIdBlock;
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/PlayerActionOnEntityPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerActionOnEntityPacket.java
-index e974cb3cbfca212e3c972d98e4fc6ad48cfc2ded..72888278492a4f021fd15a2299bddf1e183bd9a8 100644
+index e974cb3cbfca212e3c972d98e4fc6ad48cfc2ded..396caea9b37c1e3612635361ab93d8884191c28a 100644
 --- a/src/main/java/puregero/multipaper/externalserverprotocol/PlayerActionOnEntityPacket.java
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/PlayerActionOnEntityPacket.java
 @@ -67,7 +67,7 @@ public class PlayerActionOnEntityPacket extends ExternalServerPacket {
@@ -226,7 +226,7 @@ index e974cb3cbfca212e3c972d98e4fc6ad48cfc2ded..72888278492a4f021fd15a2299bddf1e
              }
  
 -            Entity entity = ((ServerLevel) player.level).getEntity(entityUuid);
-+            Entity entity = ((ServerLevel) player.level).getEntityOrPart(entityUuid); // MultiPaper
++            Entity entity = ((ServerLevel) player.level()).getEntityOrPart(entityUuid); // MultiPaper
  
              if (entity == null) {
                  LOGGER.warn(player.getScoreboardName() + " tried to run an action on a non-existent entity with uuid " + entityUuid);

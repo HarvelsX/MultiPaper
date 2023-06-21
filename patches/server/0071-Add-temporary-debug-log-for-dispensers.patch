@@ -5,10 +5,10 @@ Subject: [PATCH] Add temporary debug log for dispensers
 
 
 diff --git a/src/main/java/net/minecraft/world/level/block/DispenserBlock.java b/src/main/java/net/minecraft/world/level/block/DispenserBlock.java
-index 8f55d0753fa26924235c943595f0d1a06a933a6f..d5f4ec7c81f6512ac1a9840b75ef7aa33de42feb 100644
+index 4720b884e1e311f44a012f1219fe648a411247b4..6c38906e681481ba64ed0b1b6a969cbcc7fb68b4 100644
 --- a/src/main/java/net/minecraft/world/level/block/DispenserBlock.java
 +++ b/src/main/java/net/minecraft/world/level/block/DispenserBlock.java
-@@ -79,6 +79,7 @@ public class DispenserBlock extends BaseEntityBlock {
+@@ -78,6 +78,7 @@ public class DispenserBlock extends BaseEntityBlock {
      }
  
      public void dispenseFrom(ServerLevel world, BlockPos pos) {

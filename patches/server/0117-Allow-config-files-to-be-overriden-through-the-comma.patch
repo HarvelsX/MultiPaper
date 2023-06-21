@@ -5,10 +5,10 @@ Subject: [PATCH] Allow config files to be overriden through the command line
 
 
 diff --git a/src/main/java/net/minecraft/server/dedicated/Settings.java b/src/main/java/net/minecraft/server/dedicated/Settings.java
-index bafd0f3492a0b8778d28610785129c5eba7fe4a2..ae7b244b37e1de87caf517be7c1f119524fb88c4 100644
+index 135fc81414446f24c3adad71f5199c7898a6c1cd..4aacb8aac9f952d92a835c10c4a3e64aefe1ff61 100644
 --- a/src/main/java/net/minecraft/server/dedicated/Settings.java
 +++ b/src/main/java/net/minecraft/server/dedicated/Settings.java
-@@ -34,6 +34,12 @@ public abstract class Settings<T extends Settings<T>> {
+@@ -40,6 +40,12 @@ public abstract class Settings<T extends Settings<T>> {
      }
  
      private String getOverride(String name, String value) {
@@ -56,7 +56,7 @@ index 612c3169c3463d702b85975e1db79ae6e47d60d0..ce129408ab2c17c9841dd1dca416fb73
          return SpigotConfig.config.getDouble( path, SpigotConfig.config.getDouble( path ) );
      }
 diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
-index 5503ad6a93d331771a0e92c0da6adedf2ac81aff..d6c1db72c2614aee4157380ce6b8ffb23f1ecb5f 100644
+index 5638290c72e0daeddfa79fd55e87334fa7d86f72..366830f5ec3ce0b23388a04c099e680a0732199e 100644
 --- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
 +++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
 @@ -41,12 +41,16 @@ public class SpigotWorldConfig

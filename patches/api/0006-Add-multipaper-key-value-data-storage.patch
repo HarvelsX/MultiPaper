@@ -5,10 +5,10 @@ Subject: [PATCH] Add multipaper key-value data storage
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index 85100503d73c16625cc1171cc52b630f861cc48a..8e55965dd04097f19a901dce6343d3cbfb0d95c5 100644
+index 5b4dca864c0b28508951e8f81d7cef5d47043016..f91aa734190b6001e9417240250b56cad2cdee25 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -55,6 +55,7 @@ import org.jetbrains.annotations.Contract;
+@@ -56,6 +56,7 @@ import org.jetbrains.annotations.Contract;
  import org.jetbrains.annotations.NotNull;
  import org.jetbrains.annotations.Nullable;
  import io.papermc.paper.util.JarManifests; // Paper
@@ -16,7 +16,7 @@ index 85100503d73c16625cc1171cc52b630f861cc48a..8e55965dd04097f19a901dce6343d3cb
  
  /**
   * Represents the Bukkit core, for version and Server singleton handling
-@@ -833,6 +834,17 @@ public final class Bukkit {
+@@ -854,6 +855,17 @@ public final class Bukkit {
      public static String getLocalServerName() {
          return server.getLocalServerName();
      }
@@ -35,10 +35,10 @@ index 85100503d73c16625cc1171cc52b630f861cc48a..8e55965dd04097f19a901dce6343d3cb
  
      /**
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index e69c4d5ca82a6b36174ef7497ee369dfafe03cda..dc42aecc1919a8debaf580b6cfe3af063b5cf674 100644
+index 109a14e625ff984a1779e1317c7442aedbd1f5cf..3a5c2fb97b91ae2538102cbc8aef3bc01a2bd022 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -55,6 +55,7 @@ import org.bukkit.util.CachedServerIcon;
+@@ -56,6 +56,7 @@ import org.bukkit.util.CachedServerIcon;
  import org.jetbrains.annotations.Contract;
  import org.jetbrains.annotations.NotNull;
  import org.jetbrains.annotations.Nullable;
@@ -46,7 +46,7 @@ index e69c4d5ca82a6b36174ef7497ee369dfafe03cda..dc42aecc1919a8debaf580b6cfe3af06
  
  /**
   * Represents a server implementation.
-@@ -696,6 +697,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -721,6 +722,15 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
       */
      @NotNull
      public String getLocalServerName();

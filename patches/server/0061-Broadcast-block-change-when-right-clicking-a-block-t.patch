@@ -6,10 +6,10 @@ Subject: [PATCH] Broadcast block change when right-clicking a block to ensure
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 6cc403a42cfe76b202aaf3979dd069d8b3400484..408111092ad5a735127e854e64140b7843eebf7c 100644
+index 18471ee1071901bc30c482fdb4cc7e7a26d73672..b7e8124a1d47c93fb4f03ab044535c2e489ea08e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2072,6 +2072,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -2075,6 +2075,11 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
  
                      this.player.connection.send(new ClientboundBlockUpdatePacket(worldserver, blockposition));
                      this.player.connection.send(new ClientboundBlockUpdatePacket(worldserver, blockposition.relative(enumdirection)));

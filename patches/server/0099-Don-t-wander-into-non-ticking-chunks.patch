@@ -5,7 +5,7 @@ Subject: [PATCH] Don't wander into non-ticking chunks
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
-index 216929c838446c3c14d9b9906ffa625ef35fcbc8..5c6fe6858ec5e7ed6385809a0b32c0db97a339f7 100644
+index 216929c838446c3c14d9b9906ffa625ef35fcbc8..b3cd1709a11957008dceeb42d485e01a1847b50d 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/goal/RandomStrollGoal.java
 @@ -2,6 +2,9 @@ package net.minecraft.world.entity.ai.goal;
@@ -23,19 +23,19 @@ index 216929c838446c3c14d9b9906ffa625ef35fcbc8..5c6fe6858ec5e7ed6385809a0b32c0db
  
              Vec3 vec3 = this.getPosition();
 -            if (vec3 == null) {
-+            if (vec3 == null || !((ServerLevel) this.mob.level).isPositionEntityTicking(new BlockPos((int) vec3.x, (int) vec3.y, (int) vec3.z))) { // MultiPaper - don't wander into non-ticking chunks
++            if (vec3 == null || !((ServerLevel) this.mob.level()).isPositionEntityTicking(new BlockPos((int) vec3.x, (int) vec3.y, (int) vec3.z))) { // MultiPaper - don't wander into non-ticking chunks
                  return false;
              } else {
                  this.wantedX = vec3.x;
 diff --git a/src/main/java/net/minecraft/world/entity/animal/Squid.java b/src/main/java/net/minecraft/world/entity/animal/Squid.java
-index 31c89a6b8f766e1fd03608723c2d03f7f64e2e9b..91b7b3088df7b30ca5bbf57aeb77bc36999aae9d 100644
+index 41797940d89fec55cb7de4c63eb3ea5cdb4be967..faa1f4287945957d9ed15052c57ea91b7f5b985e 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/Squid.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/Squid.java
 @@ -192,6 +192,7 @@ public class Squid extends WaterAnimal {
              }
  
-             if (!this.level.isClientSide) {
-+                if ((tx != 0 || ty != 0 || tz != 0) && !((ServerLevel) this.level).isPositionEntityTicking(new BlockPos((int) (position().x + tx), (int) (position().y + ty), (int) (position().z + tz)))) tx = ty = tz = 0; // MultiPaper - don't allow squids to wander into non-ticking chunks
+             if (!this.level().isClientSide) {
++                if ((tx != 0 || ty != 0 || tz != 0) && !((ServerLevel) this.level()).isPositionEntityTicking(new BlockPos((int) (position().x + tx), (int) (position().y + ty), (int) (position().z + tz)))) tx = ty = tz = 0; // MultiPaper - don't allow squids to wander into non-ticking chunks
                  this.setDeltaMovement((double) (this.tx * this.speed), (double) (this.ty * this.speed), (double) (this.tz * this.speed));
              }
  

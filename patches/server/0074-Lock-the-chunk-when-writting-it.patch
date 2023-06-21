@@ -5,10 +5,10 @@ Subject: [PATCH] Lock the chunk when writting it
 
 
 diff --git a/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java b/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java
-index 7887074e9fcba84a1409f21a3b6768640e75fc0c..4275d7999d64aea1435aa64587540708c6b6cdeb 100644
+index 41d7d72625e7adfe95ba5b90eb528c4b207b01da..c1b2fbaf037a6b6d9e7a4b539a96fa421065e8f8 100644
 --- a/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java
 +++ b/src/main/java/io/papermc/paper/chunk/system/scheduling/NewChunkHolder.java
-@@ -1876,6 +1876,7 @@ public final class NewChunkHolder {
+@@ -1905,6 +1905,7 @@ public final class NewChunkHolder {
              if (unloading) {
                  try {
                      chunk.setUnsaved(false); // MultiPaper - set as saved before serializing
@@ -16,7 +16,7 @@ index 7887074e9fcba84a1409f21a3b6768640e75fc0c..4275d7999d64aea1435aa64587540708
                      final ChunkSerializer.AsyncSaveData asyncSaveData = ChunkSerializer.getAsyncSaveData(this.world, chunk);
  
                      final PrioritisedExecutor.PrioritisedTask task = this.scheduler.loadExecutor.createTask(new AsyncChunkSerializeTask(this.world, chunk, asyncSaveData, this));
-@@ -1900,6 +1901,7 @@ public final class NewChunkHolder {
+@@ -1929,6 +1930,7 @@ public final class NewChunkHolder {
  
              if (unloading) {
                  completing = true;
@@ -25,7 +25,7 @@ index 7887074e9fcba84a1409f21a3b6768640e75fc0c..4275d7999d64aea1435aa64587540708
                  LOGGER.info("Successfully serialized chunk data (" + this.chunkX + "," + this.chunkZ + ") in world '" + this.world.getWorld().getName() + "' synchronously");
              } else {
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index c966df61713574d68aa4fa02d6e2dd65a249965b..facebe82eba26a3c429a7ad77fb7ac4e34ea1bfc 100644
+index 3ebacdb624b0f1357d3377b54edff26283e56110..28420ce2ec7ccbb34eec1a26df96192b10b14c42 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -505,6 +505,10 @@ public class MultiPaper {

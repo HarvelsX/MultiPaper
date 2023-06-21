@@ -5,7 +5,7 @@ Subject: [PATCH] Hurt external entities
 
 
 diff --git a/src/main/java/net/minecraft/world/damagesource/DamageSource.java b/src/main/java/net/minecraft/world/damagesource/DamageSource.java
-index 615611fe372d6edaef56db058bbf2cf7641e3c26..aaf6e4183b5077af5e97aacadab02ac5c6935d02 100644
+index 14fcfd7c1d3a62833978e163f4e0d6f9b2203042..498ac52c6c1de58de7959b708c4d0a43c65a6988 100644
 --- a/src/main/java/net/minecraft/world/damagesource/DamageSource.java
 +++ b/src/main/java/net/minecraft/world/damagesource/DamageSource.java
 @@ -66,7 +66,7 @@ public class DamageSource {
@@ -18,7 +18,7 @@ index 615611fe372d6edaef56db058bbf2cf7641e3c26..aaf6e4183b5077af5e97aacadab02ac5
          this.causingEntity = attacker;
          this.directEntity = source;
 diff --git a/src/main/java/net/minecraft/world/damagesource/DamageSources.java b/src/main/java/net/minecraft/world/damagesource/DamageSources.java
-index d3d9bb2cdcaa3d671370ee3014341fe741275743..d862af47f418fe3156ae849820ef293bad464e45 100644
+index 4604f8b38460e9113e966889a679d4547f24aff6..74f3017924e4dbccc941bfbe4e33c7a8f0db6269 100644
 --- a/src/main/java/net/minecraft/world/damagesource/DamageSources.java
 +++ b/src/main/java/net/minecraft/world/damagesource/DamageSources.java
 @@ -1,6 +1,8 @@
@@ -30,7 +30,7 @@ index d3d9bb2cdcaa3d671370ee3014341fe741275743..d862af47f418fe3156ae849820ef293b
  import net.minecraft.core.Registry;
  import net.minecraft.core.RegistryAccess;
  import net.minecraft.core.registries.Registries;
-@@ -83,6 +85,12 @@ public class DamageSources {
+@@ -87,6 +89,12 @@ public class DamageSources {
          return new DamageSource(this.damageTypes.getHolderOrThrow(key), source, attacker);
      }
  
@@ -44,10 +44,10 @@ index d3d9bb2cdcaa3d671370ee3014341fe741275743..d862af47f418fe3156ae849820ef293b
          return this.inFire;
      }
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 90c9670df281e9b3929e7cae50f061b46ed4e39c..f620e3373bcd8f1ffa036d1ad385446c42b7c6ff 100644
+index 75810b5965e45934af2c6961d581aa7285fa4d37..843a0983b59aaaa30315f9da2832f598a542a79f 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -139,8 +139,11 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
+@@ -141,8 +141,11 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
  import org.bukkit.event.entity.EntityResurrectEvent;
  import org.bukkit.event.entity.EntityTeleportEvent;
  import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -59,7 +59,7 @@ index 90c9670df281e9b3929e7cae50f061b46ed4e39c..f620e3373bcd8f1ffa036d1ad385446c
  // CraftBukkit end
  
  
-@@ -1369,6 +1372,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -1418,6 +1421,15 @@ public abstract class LivingEntity extends Entity implements Attackable {
  
      @Override
      public boolean hurt(DamageSource source, float amount) {
@@ -74,9 +74,9 @@ index 90c9670df281e9b3929e7cae50f061b46ed4e39c..f620e3373bcd8f1ffa036d1ad385446c
 +        // MultiPaper end
          if (this.isInvulnerableTo(source)) {
              return false;
-         } else if (this.level.isClientSide) {
+         } else if (this.level().isClientSide) {
 diff --git a/src/main/java/puregero/multipaper/ExternalPlayer.java b/src/main/java/puregero/multipaper/ExternalPlayer.java
-index fa9ca6c3c8d5a9eb983d399de7b9dd5574b40487..e4e39730f3c3e487e9066a49253089a6c276e03a 100644
+index af607456caeba614420e383dc380162886d7c622..4e6db03cac76778c4150e1229b33fe2b90d37040 100644
 --- a/src/main/java/puregero/multipaper/ExternalPlayer.java
 +++ b/src/main/java/puregero/multipaper/ExternalPlayer.java
 @@ -10,13 +10,16 @@ import net.minecraft.network.syncher.EntityDataAccessor;
@@ -123,7 +123,7 @@ index ff5b08a3e27643b5e3153f3f058fd0a86090b347..aabc8ed6261846cbed62ab68c5d8ab8a
      private static void addPacket(Class<? extends ExternalServerPacket> clazz, Function<FriendlyByteBuf, ExternalServerPacket> deserializer) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/HurtEntityPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/HurtEntityPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..1091fd5721547658ec24ab0865a1e01425cdeb78
+index 0000000000000000000000000000000000000000..207e2596ec3525308d9143531dba1e180bb2fb83
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/HurtEntityPacket.java
 @@ -0,0 +1,120 @@
@@ -162,7 +162,7 @@ index 0000000000000000000000000000000000000000..1091fd5721547658ec24ab0865a1e014
 +    private final BlockPos blockDamagePos;
 +
 +    public HurtEntityPacket(Entity entity, DamageSource source, float amount, Entity entityDamage, Block blockDamage) {
-+        this.world = ((ServerLevel) entity.level).convertable.getLevelId();
++        this.world = ((ServerLevel) entity.level()).convertable.getLevelId();
 +        this.uuid = entity.getUUID();
 +        this.amount = amount;
 +        this.entityDamageUuid = entityDamage == null ? null : entityDamage.getUUID();
@@ -249,7 +249,7 @@ index 0000000000000000000000000000000000000000..1091fd5721547658ec24ab0865a1e014
 +}
 diff --git a/src/main/java/puregero/multipaper/util/DamageSourceSerializer.java b/src/main/java/puregero/multipaper/util/DamageSourceSerializer.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..b08b07ecff1f9a3fa4f974fdcc88a80911068e54
+index 0000000000000000000000000000000000000000..95b76a8d584a1b2fc0f73eb50d93768b3036a388
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/util/DamageSourceSerializer.java
 @@ -0,0 +1,158 @@
@@ -365,7 +365,7 @@ index 0000000000000000000000000000000000000000..b08b07ecff1f9a3fa4f974fdcc88a809
 +            case "cactus" -> DamageTypes.CACTUS;
 +            case "fall" -> DamageTypes.FALL;
 +            case "flyIntoWall" -> DamageTypes.FLY_INTO_WALL;
-+            case "outOfWorld" -> DamageTypes.OUT_OF_WORLD;
++            case "outOfWorld" -> DamageTypes.FELL_OUT_OF_WORLD;
 +            case "generic" -> DamageTypes.GENERIC;
 +            case "magic" -> DamageTypes.MAGIC;
 +            case "wither" -> DamageTypes.WITHER;

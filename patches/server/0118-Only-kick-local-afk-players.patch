@@ -5,15 +5,15 @@ Subject: [PATCH] Only kick local afk players
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 437a2abaa6b75d78e847fd077227e09abe3d2644..934b1a467d980a53ad90b98484ab7db896b7714a 100644
+index 990265aacccd49fd74b807c9000363fe531114f8..a7fb1a77d42c26d33d34d866a9f29ef8b50eb136 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -473,7 +473,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
+@@ -474,7 +474,7 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Tic
          reduceSpamCounters();
  // MultiPaper end
  
--        if (this.player.getLastActionTime() > 0L && this.server.getPlayerIdleTimeout() > 0 && Util.getMillis() - this.player.getLastActionTime() > (long) (this.server.getPlayerIdleTimeout() * 1000 * 60) && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits.
+-        if (this.player.getLastActionTime() > 0L && this.server.getPlayerIdleTimeout() > 0 && Util.getMillis() - this.player.getLastActionTime() > (long) this.server.getPlayerIdleTimeout() * 1000L * 60L && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits.
 +        if (MultiPaper.isRealPlayer(this.player) && this.player.getLastActionTime() > 0L && this.server.getPlayerIdleTimeout() > 0 && Util.getMillis() - this.player.getLastActionTime() > (long) (this.server.getPlayerIdleTimeout() * 1000 * 60) && !this.player.wonGame) { // Paper - Prevent AFK kick while watching end credits. // MultiPaper - Only kick local afk players
              // Purpur start
              this.player.setAfk(true);
-             if (!this.player.level.purpurConfig.idleTimeoutKick || (!Boolean.parseBoolean(System.getenv("PURPUR_FORCE_IDLE_KICK")) && kickPermissionCache.getUnchecked(this.player.getBukkitEntity()))) {
+             if (!this.player.level().purpurConfig.idleTimeoutKick || (!Boolean.parseBoolean(System.getenv("PURPUR_FORCE_IDLE_KICK")) && kickPermissionCache.getUnchecked(this.player.getBukkitEntity()))) {

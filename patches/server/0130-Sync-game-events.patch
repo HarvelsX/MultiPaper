@@ -5,10 +5,10 @@ Subject: [PATCH] Sync game events
 
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
-index ccedaf2299a0cbd969362fe9e7f6b55570679f15..59d0a73a4120ea63f4d5fa6cfbe00a04106e8d4e 100644
+index 903e677385e1f477d7817b897627929d51964c1b..01bdf4d85ec839bf11a65ca477cc7d3e2877b340 100644
 --- a/src/main/java/net/minecraft/server/level/ServerLevel.java
 +++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
-@@ -182,6 +182,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
+@@ -185,6 +185,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet; // Paper
  import puregero.multipaper.MultiPaper;
  import puregero.multipaper.MultiPaperChunkHandler;
  import puregero.multipaper.MultiPaperEntitiesHandler;
@@ -16,7 +16,7 @@ index ccedaf2299a0cbd969362fe9e7f6b55570679f15..59d0a73a4120ea63f4d5fa6cfbe00a04
  import puregero.multipaper.MultiPaperInactiveTracker;
  import puregero.multipaper.externalserverprotocol.SpawnUpdatePacket;
  import puregero.multipaper.externalserverprotocol.TimeUpdatePacket;
-@@ -904,6 +905,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
+@@ -1046,6 +1047,7 @@ public class ServerLevel extends Level implements WorldGenLevel {
  
                  LightningBolt entitylightning = (LightningBolt) EntityType.LIGHTNING_BOLT.create(this);
  
@@ -25,34 +25,28 @@ index ccedaf2299a0cbd969362fe9e7f6b55570679f15..59d0a73a4120ea63f4d5fa6cfbe00a04
                      entitylightning.moveTo(Vec3.atBottomCenterOf(blockposition));
                      entitylightning.setVisualOnly(flag1);
 diff --git a/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java b/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
-index e95540122ae6a486ce12a5f50fb4d2d073239554..fa31c9289cb7699111eb2f754d07699fa0915272 100644
+index 7166f4a39fd615e10d7b1f53c57363832a41f365..fe3928c73e7a4bf0c0cba38b417da9844593f3d3 100644
 --- a/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/src/main/java/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -70,6 +70,7 @@ import net.minecraft.world.level.gameevent.vibrations.VibrationListener;
+@@ -70,6 +70,7 @@ import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
  import net.minecraft.world.phys.Vec3;
  import org.jetbrains.annotations.Nullable;
  import org.slf4j.Logger;
 +import puregero.multipaper.MultiPaperGameEventHandler;
  
- public class Allay extends PathfinderMob implements InventoryCarrier {
+ public class Allay extends PathfinderMob implements InventoryCarrier, VibrationSystem {
  
-@@ -658,7 +659,7 @@ public class Allay extends PathfinderMob implements InventoryCarrier {
-         this.level.addParticle(ParticleTypes.HEART, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), d0, d1, d2);
-     }
- 
--    private class AllayVibrationListenerConfig implements VibrationListener.VibrationListenerConfig {
-+    class AllayVibrationListenerConfig implements VibrationListener.VibrationListenerConfig, MultiPaperGameEventHandler.SourceContainer { // MultiPaper - get allay
- 
-         AllayVibrationListenerConfig() {}
- 
-@@ -691,9 +692,13 @@ public class Allay extends PathfinderMob implements InventoryCarrier {
-         public TagKey<GameEvent> getListenableEvents() {
-             return GameEventTags.ALLAY_CAN_LISTEN;
+@@ -87,7 +88,7 @@ public class Allay extends PathfinderMob implements InventoryCarrier, VibrationS
+     protected static final ImmutableList<SensorType<? extends Sensor<? super Allay>>> SENSOR_TYPES = ImmutableList.of(SensorType.NEAREST_LIVING_ENTITIES, SensorType.NEAREST_PLAYERS, SensorType.HURT_BY, SensorType.NEAREST_ITEMS);
+     protected static final ImmutableList<MemoryModuleType<?>> MEMORY_TYPES = ImmutableList.of(MemoryModuleType.PATH, MemoryModuleType.LOOK_TARGET, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryModuleType.WALK_TARGET, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE, MemoryModuleType.HURT_BY, MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM, MemoryModuleType.LIKED_PLAYER, MemoryModuleType.LIKED_NOTEBLOCK_POSITION, MemoryModuleType.LIKED_NOTEBLOCK_COOLDOWN_TICKS, MemoryModuleType.ITEM_PICKUP_COOLDOWN_TICKS, MemoryModuleType.IS_PANICKING, new MemoryModuleType[0]);
+     public static final ImmutableList<Float> THROW_SOUND_PITCHES = ImmutableList.of(0.5625F, 0.625F, 0.75F, 0.9375F, 1.0F, 1.0F, 1.125F, 1.25F, 1.5F, 1.875F, 2.0F, 2.25F, new Float[]{2.5F, 3.0F, 3.75F, 4.0F});
+-    private final DynamicGameEventListener<VibrationSystem.Listener> dynamicVibrationListener;
++    private final DynamicGameEventListener<VibrationSystem.Listener> dynamicVibrationListener; public VibrationSystem.Listener getVibrationListener() { return dynamicVibrationListener.getListener(); } // MultiPaper - add getter
+     private VibrationSystem.Data vibrationData;
+     private final VibrationSystem.User vibrationUser;
+     private final DynamicGameEventListener<Allay.JukeboxListener> dynamicJukeboxListener;
+@@ -714,7 +715,7 @@ public class Allay extends PathfinderMob implements InventoryCarrier, VibrationS
          }
-+
-+        @Override public VibrationListener getVibrationListener() { return dynamicVibrationListener.getListener(); } // MultiPaper - add getter
-+
-+        @Override public Object getSource() { return Allay.this; } // MultiPaper - get allay
      }
  
 -    private class JukeboxListener implements GameEventListener {
@@ -60,7 +54,7 @@ index e95540122ae6a486ce12a5f50fb4d2d073239554..fa31c9289cb7699111eb2f754d07699f
  
          private final PositionSource listenerSource;
          private final int listenerRadius;
-@@ -725,5 +730,7 @@ public class Allay extends PathfinderMob implements InventoryCarrier {
+@@ -746,5 +747,7 @@ public class Allay extends PathfinderMob implements InventoryCarrier, VibrationS
                  return false;
              }
          }
@@ -69,49 +63,49 @@ index e95540122ae6a486ce12a5f50fb4d2d073239554..fa31c9289cb7699111eb2f754d07699f
      }
  }
 diff --git a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
-index 69e5b4b6c8d5725bc2fb7cd819219e4ff9df45bd..ba6cbe665c9d93ce133621161942ce68fcb0ed05 100644
+index 3fa46affc4d77d01909cfeaeaba6e06ba9fd5592..dc928dad2694d980d1fd0f117194584fe43afec4 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/warden/Warden.java
-@@ -107,7 +107,7 @@ public class Warden extends Monster implements VibrationListener.VibrationListen
+@@ -106,7 +106,7 @@ public class Warden extends Monster implements VibrationSystem {
      public AnimationState diggingAnimationState = new AnimationState();
      public AnimationState attackAnimationState = new AnimationState();
      public AnimationState sonicBoomAnimationState = new AnimationState();
--    private final DynamicGameEventListener<VibrationListener> dynamicGameEventListener = new DynamicGameEventListener<>(new VibrationListener(new EntityPositionSource(this, this.getEyeHeight()), 16, this));
-+    private final DynamicGameEventListener<VibrationListener> dynamicGameEventListener = new DynamicGameEventListener<>(new VibrationListener(new EntityPositionSource(this, this.getEyeHeight()), 16, this)); public VibrationListener getVibrationListener() { return dynamicGameEventListener.getListener(); } // MultiPaper - add getter
-     private AngerManagement angerManagement = new AngerManagement(this::canTargetEntity, Collections.emptyList());
- 
-     public Warden(EntityType<? extends Monster> type, Level world) {
+-    private final DynamicGameEventListener<VibrationSystem.Listener> dynamicGameEventListener = new DynamicGameEventListener<>(new VibrationSystem.Listener(this));
++    private final DynamicGameEventListener<VibrationSystem.Listener> dynamicGameEventListener = new DynamicGameEventListener<>(new VibrationSystem.Listener(this)); public VibrationSystem.Listener getVibrationListener() { return dynamicGameEventListener.getListener(); } // MultiPaper - add getter
+     private final VibrationSystem.User vibrationUser = new Warden.VibrationUser();
+     private VibrationSystem.Data vibrationData = new VibrationSystem.Data();
+     AngerManagement angerManagement = new AngerManagement(this::canTargetEntity, Collections.emptyList());
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/SculkSensorBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/SculkSensorBlockEntity.java
-index a73d23d4235354c6232471d9839254f4bd791d0a..f4405af29c1cbaa20f422f7a48f71ab83138c298 100644
+index 5d3740875de337e24fdba28305f61e96d01c457f..a13097e4d17898713383ed3bea3db81c9c04d4ec 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/SculkSensorBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/SculkSensorBlockEntity.java
-@@ -19,7 +19,7 @@ import org.slf4j.Logger;
- 
- public class SculkSensorBlockEntity extends BlockEntity implements VibrationListener.VibrationListenerConfig {
+@@ -21,7 +21,7 @@ import org.slf4j.Logger;
+ public class SculkSensorBlockEntity extends BlockEntity implements GameEventListener.Holder<VibrationSystem.Listener>, VibrationSystem {
      private static final Logger LOGGER = LogUtils.getLogger();
--    private VibrationListener listener;
-+    private VibrationListener listener; public VibrationListener getVibrationListener() { return listener; } // MultiPaper - add getter
+     private VibrationSystem.Data vibrationData;
+-    private final VibrationSystem.Listener vibrationListener;
++    private final VibrationSystem.Listener vibrationListener; public VibrationSystem.Listener getVibrationListener() { return vibrationListener; } // MultiPaper - add getter
+     private final VibrationSystem.User vibrationUser = this.createVibrationUser();
      public int lastVibrationFrequency;
- 
-     public SculkSensorBlockEntity(BlockPos pos, BlockState state) {
+     @Nullable public Integer rangeOverride = null; // Paper
 diff --git a/src/main/java/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java b/src/main/java/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java
-index 25791572eab50de9b9a1fc6b8b3b3ca7df7493e2..f1ed1d75070b6d831dd7a9e02c8d18dad0ace8c9 100644
+index 5935cf23ec11ae48b6c7cec9bd696d10d808e729..5fd8eedf4445ac0d1992332ece5bdac473ba0dd8 100644
 --- a/src/main/java/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java
 +++ b/src/main/java/net/minecraft/world/level/block/entity/SculkShriekerBlockEntity.java
-@@ -55,7 +55,7 @@ public class SculkShriekerBlockEntity extends BlockEntity implements VibrationLi
-     });
-     private static final int SHRIEKING_TICKS = 90;
+@@ -58,7 +58,7 @@ public class SculkShriekerBlockEntity extends BlockEntity implements GameEventLi
      public int warningLevel;
--    private VibrationListener listener = new VibrationListener(new BlockPositionSource(this.worldPosition), 8, this);
-+    private VibrationListener listener = new VibrationListener(new BlockPositionSource(this.worldPosition), 8, this); public VibrationListener getVibrationListener() { return listener; } // MultiPaper - add getter
+     private final VibrationSystem.User vibrationUser = new SculkShriekerBlockEntity.VibrationUser();
+     private VibrationSystem.Data vibrationData = new VibrationSystem.Data();
+-    private final VibrationSystem.Listener vibrationListener = new VibrationSystem.Listener(this);
++    private final VibrationSystem.Listener vibrationListener = new VibrationSystem.Listener(this); public VibrationSystem.Listener getVibrationListener() { return vibrationListener; } // MultiPaper - add getter
  
      public SculkShriekerBlockEntity(BlockPos pos, BlockState state) {
          super(BlockEntityType.SCULK_SHRIEKER, pos, state);
 diff --git a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-index 26895f7627820f8643156a6a0b3d7438df163d28..7bccd0ae4169a21fcae4d776d389782e0403a6b4 100644
+index cae24e0cd477df6d83561e0d300038f8c31b53b8..98ae80c2ca5e4fa6fcfef44bab75924e6439242a 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -811,7 +811,7 @@ public class LevelChunk extends ChunkAccess {
+@@ -780,7 +780,7 @@ public class LevelChunk extends ChunkAccess {
          this.removeBlockEntityTicker(pos);
      }
  
@@ -120,7 +114,7 @@ index 26895f7627820f8643156a6a0b3d7438df163d28..7bccd0ae4169a21fcae4d776d389782e
          Block block = blockEntity.getBlockState().getBlock();
  
          if (block instanceof EntityBlock) {
-@@ -1226,7 +1226,7 @@ public class LevelChunk extends ChunkAccess {
+@@ -1188,7 +1188,7 @@ public class LevelChunk extends ChunkAccess {
          });
      }
  
@@ -130,17 +124,17 @@ index 26895f7627820f8643156a6a0b3d7438df163d28..7bccd0ae4169a21fcae4d776d389782e
  
          if (block instanceof EntityBlock) {
 diff --git a/src/main/java/net/minecraft/world/level/gameevent/GameEventDispatcher.java b/src/main/java/net/minecraft/world/level/gameevent/GameEventDispatcher.java
-index 25e4596e64b74ada86f210b06ba837be8efc21d1..2f7cedda0e16a687f908692cf7b18ac5a5b79645 100644
+index f2d10d58617644a589ecec3e17358c1277795e5d..b223198fc11a9bad9c47c8c482144640a3842e37 100644
 --- a/src/main/java/net/minecraft/world/level/gameevent/GameEventDispatcher.java
 +++ b/src/main/java/net/minecraft/world/level/gameevent/GameEventDispatcher.java
-@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
- import org.bukkit.Location;
+@@ -17,6 +17,7 @@ import org.bukkit.craftbukkit.util.CraftLocation;
  import org.bukkit.craftbukkit.util.CraftNamespacedKey;
  import org.bukkit.event.world.GenericGameEvent;
-+import puregero.multipaper.MultiPaperGameEventHandler;
  // CraftBukkit end
++import puregero.multipaper.MultiPaperGameEventHandler;
  
  public class GameEventDispatcher {
+ 
 @@ -84,6 +85,7 @@ public class GameEventDispatcher {
              GameEvent.ListenerInfo gameevent_b = (GameEvent.ListenerInfo) iterator.next();
              GameEventListener gameeventlistener = gameevent_b.recipient();
@@ -149,37 +143,8 @@ index 25e4596e64b74ada86f210b06ba837be8efc21d1..2f7cedda0e16a687f908692cf7b18ac5
              gameeventlistener.handleGameEvent(this.level, gameevent_b.gameEvent(), gameevent_b.context(), gameevent_b.source());
          }
  
-diff --git a/src/main/java/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java b/src/main/java/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java
-index 103e12ec589dcbe6dbad7432b50e0644c3a37b1b..dcdb032889655456f8d1c65f1d989ba9515a0810 100644
---- a/src/main/java/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java
-+++ b/src/main/java/net/minecraft/world/level/gameevent/vibrations/VibrationListener.java
-@@ -33,6 +33,7 @@ import net.minecraft.server.level.ServerPlayer;
- import org.bukkit.craftbukkit.block.CraftBlock;
- import org.bukkit.craftbukkit.util.CraftNamespacedKey;
- import org.bukkit.event.block.BlockReceiveGameEvent;
-+import puregero.multipaper.MultiPaperGameEventHandler;
- // CraftBukkit end
- 
- public class VibrationListener implements GameEventListener {
-@@ -85,7 +86,7 @@ public class VibrationListener implements GameEventListener {
-     }));
-     protected final PositionSource listenerSource;
-     public int listenerRange;
--    protected final VibrationListener.VibrationListenerConfig config;
-+    public final VibrationListener.VibrationListenerConfig config; // MultiPaper - make public
-     @Nullable
-     protected VibrationInfo currentVibration;
-     protected int travelTimeInTicks;
-@@ -273,5 +274,7 @@ public class VibrationListener implements GameEventListener {
-         void onSignalReceive(ServerLevel world, GameEventListener listener, BlockPos pos, GameEvent event, @Nullable Entity entity, @Nullable Entity sourceEntity, float distance);
- 
-         default void onSignalSchedule() {}
-+
-+        VibrationListener getVibrationListener(); // MultiPaper
-     }
- }
 diff --git a/src/main/java/puregero/multipaper/MultiPaper.java b/src/main/java/puregero/multipaper/MultiPaper.java
-index d6651d406410eb7e6e22d89bedc53479cc4291ea..224c52fb47aa0023d509abca7145565ea0ac7f5f 100644
+index d0586f9ed5a6cbd4e60fd444af5c8f857e747393..c5f1d62d4512d84fc3f2758da6ef23ebfc420168 100644
 --- a/src/main/java/puregero/multipaper/MultiPaper.java
 +++ b/src/main/java/puregero/multipaper/MultiPaper.java
 @@ -5,6 +5,7 @@ import io.papermc.paper.world.ChunkEntitySlices;
@@ -200,7 +165,7 @@ index d6651d406410eb7e6e22d89bedc53479cc4291ea..224c52fb47aa0023d509abca7145565e
  
              player.syncExperience();
 diff --git a/src/main/java/puregero/multipaper/MultiPaperChunkHandler.java b/src/main/java/puregero/multipaper/MultiPaperChunkHandler.java
-index 59d011962c3692e235997a5cf2893478347a2828..09e4266bbdc06450ca72108dd2db357bc1e192b2 100644
+index c6503af0fd03ee334c44445fe7b6ce7ba78245eb..b14a0e8d5c11a17dbf5ea0747318d5c264fd0b54 100644
 --- a/src/main/java/puregero/multipaper/MultiPaperChunkHandler.java
 +++ b/src/main/java/puregero/multipaper/MultiPaperChunkHandler.java
 @@ -164,7 +164,9 @@ public class MultiPaperChunkHandler {
@@ -215,10 +180,10 @@ index 59d011962c3692e235997a5cf2893478347a2828..09e4266bbdc06450ca72108dd2db357b
                      MCUtil.scheduleTask(1, () -> handleBlockUpdate(world, packet, depth + 1));
 diff --git a/src/main/java/puregero/multipaper/MultiPaperGameEventHandler.java b/src/main/java/puregero/multipaper/MultiPaperGameEventHandler.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..a354a69cfee340214ca4c48a5e21af6974fe3b41
+index 0000000000000000000000000000000000000000..b96b02d5e5be62a2aadb3623f0164885f4c8db3f
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/MultiPaperGameEventHandler.java
-@@ -0,0 +1,77 @@
+@@ -0,0 +1,74 @@
 +package puregero.multipaper;
 +
 +import com.mojang.datafixers.util.Either;
@@ -229,7 +194,6 @@ index 0000000000000000000000000000000000000000..a354a69cfee340214ca4c48a5e21af69
 +import net.minecraft.world.level.block.entity.BlockEntity;
 +import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.level.gameevent.GameEventListener;
-+import net.minecraft.world.level.gameevent.vibrations.VibrationListener;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
 +import puregero.multipaper.externalserverprotocol.GameEventPacket;
@@ -251,8 +215,6 @@ index 0000000000000000000000000000000000000000..a354a69cfee340214ca4c48a5e21af69
 +            return Either.right(blockEntity);
 +        } else if (object instanceof SourceContainer sourceContainer) {
 +            return getEntity(sourceContainer.getSource());
-+        } else if (object instanceof VibrationListener vibrationListener) {
-+            return getEntity(vibrationListener.config);
 +        } else {
 +            throw new IllegalArgumentException(object + " could not be converted to either an Entity or a BlockEntity!");
 +        }
@@ -287,7 +249,7 @@ index 0000000000000000000000000000000000000000..a354a69cfee340214ca4c48a5e21af69
 +    }
 +
 +    public static boolean onGameEvent(GameEventListener gameEventListener, ServerLevel world, GameEvent.ListenerInfo event) {
-+        Either<Entity, BlockEntity> either = getEntity(gameEventListener);
++        Either<Entity, BlockEntity> either = getEntity(event.context().sourceEntity());
 +        Optional<ExternalServer> controllingServer = getControllingServer(either);
 +
 +        controllingServer.ifPresent(
@@ -310,7 +272,7 @@ index 7436f3c9565099769c8abcb66e8ba719bec9bde8..0aa7f26833c1e572e3339c5734b7d4c5
      private static void addPacket(Class<? extends ExternalServerPacket> clazz, Function<FriendlyByteBuf, ExternalServerPacket> deserializer) {
 diff --git a/src/main/java/puregero/multipaper/externalserverprotocol/GameEventPacket.java b/src/main/java/puregero/multipaper/externalserverprotocol/GameEventPacket.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..ae0190fdf03d45ba0dcd45b220f8100916bdd7a3
+index 0000000000000000000000000000000000000000..862d7120d8cc48987907c95cc902dc175d72286b
 --- /dev/null
 +++ b/src/main/java/puregero/multipaper/externalserverprotocol/GameEventPacket.java
 @@ -0,0 +1,132 @@
@@ -327,9 +289,9 @@ index 0000000000000000000000000000000000000000..ae0190fdf03d45ba0dcd45b220f81009
 +import net.minecraft.world.level.block.entity.BlockEntity;
 +import net.minecraft.world.level.block.state.BlockState;
 +import net.minecraft.world.level.chunk.LevelChunk;
++import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 +import net.minecraft.world.level.gameevent.GameEvent;
 +import net.minecraft.world.level.gameevent.GameEventListener;
-+import net.minecraft.world.level.gameevent.vibrations.VibrationListener;
 +import net.minecraft.world.phys.Vec3;
 +import org.apache.logging.log4j.LogManager;
 +import org.apache.logging.log4j.Logger;
@@ -419,8 +381,8 @@ index 0000000000000000000000000000000000000000..ae0190fdf03d45ba0dcd45b220f81009
 +    private GameEventListener getGameEventListener(Object entity) {
 +        if (entity instanceof GameEventListener gameEventListener) {
 +            return gameEventListener;
-+        } else if (entity instanceof VibrationListener.VibrationListenerConfig vibrationListenerConfig) {
-+            return vibrationListenerConfig.getVibrationListener();
++        } else if (entity instanceof DynamicGameEventListener<?> dynamicGameEventListener) {
++            return dynamicGameEventListener.getListener();
 +        } else {
 +            throw new IllegalArgumentException("Could not figure out how to convert " + entity + " to a GameEventListener");
 +        }

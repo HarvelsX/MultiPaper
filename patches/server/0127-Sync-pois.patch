@@ -5,7 +5,7 @@ Subject: [PATCH] Sync pois
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
-index dab03b55325442b48875a3e6ca0169c13a9d2707..2bc7cf11344d1c4ac82c7249a85d9b6c8620cf5f 100644
+index dc1f9043e8c75d90492242f697911b2ba340b717..c2322f8c117eb93f8cc67a8b0a6f66452fd971aa 100644
 --- a/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
 +++ b/src/main/java/net/minecraft/world/entity/ai/village/poi/PoiManager.java
 @@ -35,6 +35,7 @@ import net.minecraft.world.level.chunk.ChunkStatus;
@@ -62,7 +62,7 @@ index dab03b55325442b48875a3e6ca0169c13a9d2707..2bc7cf11344d1c4ac82c7249a85d9b6c
          // Paper start - rewrite chunk system
          int chunkX = io.papermc.paper.util.CoordinateUtils.getChunkSectionX(pos);
          int chunkZ = io.papermc.paper.util.CoordinateUtils.getChunkSectionZ(pos);
-@@ -291,7 +298,7 @@ public class PoiManager extends SectionStorage<PoiSection> {
+@@ -292,7 +299,7 @@ public class PoiManager extends SectionStorage<PoiSection> {
      }
  
      @Override
@@ -102,7 +102,7 @@ index 9f138bc471b5c2a4fa813ff943dbe34018b8df74..caf0ea0f26afa5587aa9e981e539d465
      }
  
 diff --git a/src/main/java/net/minecraft/world/level/chunk/storage/SectionStorage.java b/src/main/java/net/minecraft/world/level/chunk/storage/SectionStorage.java
-index d783072bc964e45c308197e6f79874eb4a09f871..761f1f1471d7384b6b9207554f298613ce6d550b 100644
+index 5561b8499a0503b850974b1dc309edfb80219549..b3a88b1e94c8b43cdbec49f27aefc86d711f8885 100644
 --- a/src/main/java/net/minecraft/world/level/chunk/storage/SectionStorage.java
 +++ b/src/main/java/net/minecraft/world/level/chunk/storage/SectionStorage.java
 @@ -99,7 +99,7 @@ public class SectionStorage<R> extends RegionFileStorage implements AutoCloseabl

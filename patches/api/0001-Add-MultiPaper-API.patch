@@ -5,10 +5,10 @@ Subject: [PATCH] Add MultiPaper API
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index 78a9155e78178f1cc8da2a2d42fd3276565030f5..cbe4a143f714560f2495c532224930e8d5af571d 100644
+index 7d759a4725dbea992f078b6c1a60d9822bb268a3..3e785d79e9830d3d89c7bc622280dd2e2aeb68f0 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -743,6 +743,28 @@ public final class Bukkit {
+@@ -764,6 +764,28 @@ public final class Bukkit {
          return server.getServicesManager();
      }
  
@@ -38,7 +38,7 @@ index 78a9155e78178f1cc8da2a2d42fd3276565030f5..cbe4a143f714560f2495c532224930e8
       * Gets a list of all worlds on this server.
       *
 diff --git a/src/main/java/org/bukkit/Chunk.java b/src/main/java/org/bukkit/Chunk.java
-index 2f6142b6bfaa3b523478eccd6ad13ce922e81da9..71cc1d5f696e482c4d960ba21bdb6dfedc18f847 100644
+index 4418c41f75e9a190dd77abdd6048b0a4fb2a57ed..8f35880c12e16a8ed7f1ef7d3fd9df5cd2569d7b 100644
 --- a/src/main/java/org/bukkit/Chunk.java
 +++ b/src/main/java/org/bukkit/Chunk.java
 @@ -192,6 +192,26 @@ public interface Chunk extends PersistentDataHolder {
@@ -69,7 +69,7 @@ index 2f6142b6bfaa3b523478eccd6ad13ce922e81da9..71cc1d5f696e482c4d960ba21bdb6dfe
       * Checks if this chunk can spawn slimes without being a swamp biome.
       *
 diff --git a/src/main/java/org/bukkit/Location.java b/src/main/java/org/bukkit/Location.java
-index 6bbf8468bc47e82b0aeb164e49cdb73d93bae87b..8c6328ff7148a29b6fed328b0427a3a7eb0b56f4 100644
+index 1a60a18e15780128a1914826daa952ffacb92e9e..ee2b1b4b851a23168e746527e5cab0aa9bad2d22 100644
 --- a/src/main/java/org/bukkit/Location.java
 +++ b/src/main/java/org/bukkit/Location.java
 @@ -346,6 +346,30 @@ public class Location implements Cloneable, ConfigurationSerializable, io.paperm
@@ -201,10 +201,10 @@ index 0000000000000000000000000000000000000000..d569e2c95f07e05d9fce019dafc33f9c
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 730caafaf9629664ba125f3884559da76616f655..be51ef7bfa2f4593101d55694e5dcc7b59cad296 100644
+index 15a0ae9744fa841e3e51e9e9a957cea8c71e68ad..db514c6cdd207879b4787fec41a738142e8b3423 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -614,6 +614,24 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
+@@ -639,6 +639,24 @@ public interface Server extends PluginMessageRecipient, net.kyori.adventure.audi
      @NotNull
      public ServicesManager getServicesManager();
  
@@ -230,10 +230,10 @@ index 730caafaf9629664ba125f3884559da76616f655..be51ef7bfa2f4593101d55694e5dcc7b
       * Gets a list of all worlds on this server.
       *
 diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
-index cf8b93aa5787e96f54e2ffe2a0f157b0e53e2c5c..4c6a8fbb58d439581a167a219ce723922905e98e 100644
+index adf8169d5baefa7a33c33ef066180a8116617756..66b6fd1195ab23a8af1b7dfc7fe3539591380143 100644
 --- a/src/main/java/org/bukkit/World.java
 +++ b/src/main/java/org/bukkit/World.java
-@@ -425,6 +425,26 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
+@@ -381,6 +381,26 @@ public interface World extends RegionAccessor, WorldInfo, PluginMessageRecipient
      @Deprecated
      public boolean isChunkInUse(int x, int z);
  
@@ -325,10 +325,10 @@ index cc78ce7de88a9a404ed20d5bc61b98d3107f29b3..be25290e12e3f73fb090ddde466e74cb
       * Returns the entity's current fire ticks (ticks before the entity stops
       * being on fire).
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 43cef54d355c8a1b6a8cd6be89a6a805e9f88566..2b4805214c15595025b42cf00ae400d180b84554 100644
+index c6a8068fc9c2a2b9b53363578c2c57abc4f8abb2..2cb1eaa0daa40a21e64a1b7849e39373c4abee70 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -379,6 +379,84 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+@@ -395,6 +395,84 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
       */
      public void setBedSpawnLocation(@Nullable Location location, boolean force);
  
